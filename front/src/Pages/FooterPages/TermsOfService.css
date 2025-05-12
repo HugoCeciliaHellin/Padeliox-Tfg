@@ -1,0 +1,25 @@
+/* src/Pages/TermsOfService/TermsOfService.css */
+
+.page {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+    color: #333;
+    line-height: 1.6;
+  }
+  
+  .terms h1 {
+    margin-bottom: 1rem;
+    color: var(--primary-color);
+  }
+  
+  .terms section {
+    margin-top: 1.5rem;
+  }
+  
+  .terms h2 {
+    margin-bottom: 0.5rem;
+    font-size: 1.2rem;
+    color: var(--primary-color);
+  }
+  

@@ -1,0 +1,19 @@
+/* App.css o variables.css */
+:root {
+  --bg-color: #f7f4ed;
+  --primary-color: #002244;
+  --accent-color: #ffcc00;
+  --hover-color: #ffdb4d;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--primary-color);
+}
+
+button {
+  background-color: var(--accent-color);
+}
+button:hover {
+  background-color: var(--hover-color);
+}
