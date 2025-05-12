@@ -1,0 +1,115 @@
+/* src/components/Header/Header.css */
+
+/* — Variables globales — */
+:root {
+  --primary-color:   #002147; /* azul oscuro del header */
+  --bg-color:        #ffffff; /* texto claro */
+  --accent-color:    #ffc107; /* amarillo (hover de títulos/enlaces) */
+  --hover-color:     #e0a800; /* amarillo más oscuro (hover de botón logout) */
+  --info-color:      #17a2b8; /* teal para botón “Inicio” */
+  --info-hover:      #138496; /* teal oscuro */
+}
+
+.header {
+  background-color: var(--primary-color);
+  color: var(--bg-color);
+  padding: 0.75rem 1rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.header .container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  height: 50px;
+  cursor: pointer;
+}
+
+/* — Navegación — */
+nav ul {
+  list-style: none;
+  display: flex;
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+}
+
+nav li {
+  display: flex;
+  align-items: center;
+}
+
+/* Enlaces normales */
+nav a {
+  display: block;
+  padding: 0.4rem 0.75rem;
+  border-radius: 4px;
+  color: var(--bg-color);
+  text-decoration: none;
+  font-weight: 500;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+/* Hover de títulos (Perfil, Mis Reservas, etc) en amarillo */
+nav a:hover {
+  background-color: var(--accent-color);
+  color: var(--primary-color);
+}
+
+/* Botones (clásicos) */
+.btn-home,
+.btn-logout {
+  display: inline-block;
+  padding: 0.4rem 0.75rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+/* Botón “Inicio” */
+.btn-home {
+  background-color: var(--info-color);
+  color: var(--bg-color);
+}
+.btn-home:hover {
+  background-color: var(--info-hover);
+  transform: translateY(-1px);
+}
+
+/* Botón “Cerrar Sesión” */
+.btn-logout {
+  background-color: var(--accent-color);
+  color: var(--primary-color);
+  margin-left: 0.5rem;
+}
+.btn-logout:hover {
+  background-color: var(--hover-color);
+  transform: translateY(-1px);
+}
+
+/* Datos de usuario no clicables */
+.user-info {
+  padding: 0.4rem 0.6rem;
+  font-weight: 500;
+  color: var(--bg-color);
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .header .container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  nav ul {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+}
