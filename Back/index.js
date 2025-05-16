@@ -19,16 +19,8 @@ app.use(cors());   // permite cualquier origen
 
 // Rutas públicas
 app.use('/api/auth', authRoutes);
-
 app.use('/api/courts', courtRoutes);
 app.use('/api/reservations', reservationRoutes);
-
-
-
-// Ruta protegida de ejemplo (más adelante añade authMiddleware)
-app.get('/api/protected', (req, res) => {
-  res.json({ message: 'Ruta protegida' });
-});
 
 // Sincronizar DB e iniciar servidor
 sequelize.sync({ alter: true })

@@ -1,6 +1,10 @@
 // controllers/courtController.js
-const  Court  = require('../models/Court');
 const { Op } = require('sequelize');
+const { toLocalISO } = require('../utils/date');
+const reservationService = require('../services/reservationService');
+const { Court } = require('../models');
+
+
 
 exports.listCourts = async (req, res) => {
   const {
@@ -32,4 +36,17 @@ exports.getCourt = async (req, res) => {
   const court = await Court.findByPk(req.params.id);
   if (!court) return res.status(404).json({ message: 'Pista no encontrada' });
   res.json(court);
+};
+
+exports.getAvailability = async (req, res) => {
+  const rows = await reservationService.getAvailability(
+    req.params.id,
+    req.query.date
+  );
+  return res.json(
+    rows.map(r => ({
+      start: toLocalISO(r.startTime),
+      end:   toLocalISO(r.endTime)
+    }))
+  );
 };

@@ -1,5 +1,7 @@
+// src/Pages/Courts/Courts.jsx
 import { useState, useEffect } from 'react';
 import CourtCard from '../../components/CourtCard/CourtCard';
+import { getCourts } from '../../api/courts';
 import './Courts.css';
 
 function Courts() {
@@ -9,12 +11,8 @@ function Courts() {
   });
 
   useEffect(() => {
-    async function loadCourts() {
-      const params = new URLSearchParams(filters);
-      const res = await fetch(`/api/courts?${params}`);
-      setCourts(await res.json());
-    }
-    loadCourts();
+    getCourts(filters).then(setCourts);
+    
   }, [filters]);
   
 

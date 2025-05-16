@@ -1,18 +1,13 @@
-// routes/reservationRoutes.js
+//routes/reservationRoutes.js
 const express = require('express');
-const router  = express.Router();            // ← ¡Muy importante!
+const router  = express.Router();
 const { body, validationResult } = require('express-validator');
 const auth    = require('../middlewares/authMiddleware');
-const {
-  createReservation,
-  listMyReservations,
-  updateReservation,
-  deleteReservation
-} = require('../controllers/reservationController');
+const reservationController = require('../controllers/reservationController');
 
-// Todas las rutas aquí usan `router`, no `app`
 router.use(auth);
 
+// crear reserva
 router.post('/',
   body('courtId').isInt(),
   body('startTime').isISO8601(),
@@ -22,17 +17,21 @@ router.post('/',
     if (!errs.isEmpty()) return res.status(400).json({ errors: errs.array() });
     next();
   },
-  createReservation
+  reservationController.createReservation
 );
 
-router.get('/', listMyReservations);
+// listar mis reservas
+router.get('/', reservationController.listMyReservations);
 
+// editar reserva
 router.put('/:id',
   body('startTime').optional().isISO8601(),
   body('endTime').optional().isISO8601(),
-  updateReservation
+  reservationController.updateReservation
 );
 
-router.delete('/:id', deleteReservation);
+// borrar reserva
+router.delete('/:id', reservationController.deleteReservation);
+
 
 module.exports = router;

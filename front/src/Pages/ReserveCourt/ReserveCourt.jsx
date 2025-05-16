@@ -1,82 +1,99 @@
+// src/Pages/ReserveCourt/ReserveCourt.jsx
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import SlotGrid from '../../components/SlotGrid/SlotGrid';
+import { generateSlots } from '../../utils/slots';
+import { toLocalISO } from '../../utils/date';
+import { getCourtAvailability } from '../../api/courts';
+import { createReservation } from '../../api/reservations';
 import './ReserveCourt.css';
-function ReserveCourt() {
+
+const ONE_HOUR = 60 * 60 * 1000;
+
+export default function ReserveCourt() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [court, setCourt] = useState(null);
-  const [startTime, setStartTime] = useState('');
-  const [endTime, setEndTime] = useState('');
-  const [err, setErr] = useState('');
 
+  const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
+  const [occupied, setOccupied] = useState([]);              // [{start,end},…]
+  const [selected, setSelected] = useState(new Set());       // Set<string> de ISO-local
+  const today = new Date().toISOString().slice(0, 10);
+
+  // ① Carga disponibilidad cada vez que cambie pista o fecha
   useEffect(() => {
-    async function loadCourt() {
-      const token = localStorage.getItem('token');
-      const res = await fetch(`/api/courts/${id}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      if (!res.ok) {
-        setErr('No se encontró la pista o no tienes permiso.');
-        return;
-      }
-      setCourt(await res.json());
-    }
-    loadCourt();
-  }, [id]);
+    getCourtAvailability(id, date)
+      .then(slots => {
+        setOccupied(slots);
+        setSelected(new Set());    // limpia selección al cambiar fecha
+      })
+      .catch(console.error);
+  }, [id, date]);
 
+  // ② Genera todos los slots de 1h
+  const slots = generateSlots({
+    date,
+    openTime: '08:00',
+    closeTime: '22:00',
+    intervalMs: ONE_HOUR
+  });
+
+  // ③ Toggle de selección
+  const toggle = slot => {
+    setSelected(s => {
+      const next = new Set(s);
+      if (next.has(slot)) next.delete(slot);
+      else next.add(slot);
+      return next;
+    });
+  };
+
+  // ④ Submit
   const handleSubmit = async e => {
     e.preventDefault();
-    const token = localStorage.getItem('token');
-    const res = await fetch('/api/reservations', {
-      method: 'POST',
-      headers: {
-        'Content-Type':'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify({ courtId: id, startTime, endTime })
-    });
-    if (res.ok) {
-      alert('✅ Reserva confirmada');
+    if (selected.size !== 1) {
+      return alert('Selecciona exactamente una franja de 1 hora.');
+    }
+    const slot = Array.from(selected)[0];
+    const start = slot;
+    const end = toLocalISO(new Date(new Date(slot).getTime() + ONE_HOUR));
+
+    try {
+      await createReservation(id, start, end);
       navigate('/app/reservas');
-    } else {
-      const body = await res.json();
-      alert('❌ Error: ' + (body.message || JSON.stringify(body)));
+    } catch (err) {
+      const msg = err.response?.data?.message || err.message;
+      alert('❌ ' + msg);
+      // forzar recarga de ocupadas
+      setDate(d => d);
     }
   };
 
-  if (err) return <p style={{ color: 'red', textAlign:'center' }}>{err}</p>;
-  if (!court) return <p style={{ textAlign:'center' }}>Cargando pista…</p>;
-
   return (
-    <div className='main-app'>
-    <div className="reserve-court-container">
-      <h2>Reservar: {court.clubName} – {court.city}</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Inicio:</label><br/>
-          <input
-            type="datetime-local"
-            value={startTime}
-            onChange={e => setStartTime(e.target.value)}
-            required
-          />
-        </div>
-        <div style={{ marginTop: '1rem' }}>
-          <label>Fin:</label><br/>
-          <input
-            type="datetime-local"
-            value={endTime}
-            onChange={e => setEndTime(e.target.value)}
-            required
-          />
-        </div>
-        <button type="submit" style={{ marginTop: '1.5rem' }}>
-          Confirmar reserva
-        </button>
-      </form>
-    </div>
+    <div className="main-app reserve-court">
+      <h2>Reservar pista #{id}</h2>
+      <label>
+        Fecha:
+        <input
+          type="date"
+          value={date}
+          onChange={e => setDate(e.target.value)}
+          min={today}
+        />
+      </label>
+
+      <SlotGrid
+        slots={slots}
+        occupiedSlots={occupied}
+        selectedSlots={selected}
+        onToggle={toggle}
+      />
+
+      <button 
+        onClick={handleSubmit} 
+        disabled={selected.size !== 1}
+      >
+        Confirmar 1 hora
+      </button>
     </div>
   );
 }
-
-export default ReserveCourt;

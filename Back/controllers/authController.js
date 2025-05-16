@@ -58,7 +58,7 @@ const login = async (req, res) => {
     const token = jwt.sign(
       { userId: user.id, role: user.role, email: user.email },
       process.env.JWT_SECRET,
-      { expiresIn: '1h' }
+      { expiresIn: '10h' } //El token expira en 10 horas
     );
 
     res.json({ token, userId: user.id, role: user.role, username: user.username, email: user.email });
