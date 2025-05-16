@@ -1,107 +1,69 @@
-import './MyReservations.css';
+// src/Pages/MyReservations/MyReservations.jsx
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import ReservationCard from '../../components/ReservationCard/ReservationCard';
+import EditReservation from '../EditReservation/EditReservation';
+import { listMyReservations, deleteReservation } from '../../api/reservations';
+import './MyReservations.css';
 
-function MyReservations() {
-  const [list, setList] = useState([]);
-  const navigate = useNavigate();
+export default function MyReservations() {
+  const [reservas, setReservas] = useState([]);
+  const [mode, setMode] = useState(null); // { id } o null
 
   useEffect(() => {
-    async function loadReservations() {
-      const token = localStorage.getItem('token');
-      const res = await fetch('/api/reservations', {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      if (!res.ok) {
-        console.error('Error al cargar reservas', res.status);
-        return;
-      }
-      const data = await res.json();
-      setList(Array.isArray(data) ? data : data.reservations || []);
-    }
-    loadReservations();
+    listMyReservations().then(setReservas);
   }, []);
 
-  const handleDelete = async id => {
-    if (!window.confirm('¿Seguro que quieres eliminar esta reserva?')) return;
-    const token = localStorage.getItem('token');
-    const res = await fetch(`/api/reservations/${id}`, {
-      method: 'DELETE',
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-    if (res.ok) {
-      setList(lst => lst.filter(r => r.id !== id));
-    } else {
-      const err = await res.json();
-      alert('Error al eliminar: ' + (err.message || res.status));
+  const now = Date.now();
+  const próximas = reservas.filter(r => new Date(r.endTime).getTime() > now);
+  const pasadas  = reservas.filter(r => new Date(r.endTime).getTime() <= now);
+
+  const del = async id => {
+    if (!window.confirm('¿Eliminar reserva?')) return;
+    try {
+      await deleteReservation(id);
+      setReservas(rs => rs.filter(r => r.id !== id));
+    } catch (err) {
+      const msg = err.response?.data?.message || err.message;
+      alert('Error: ' + msg);
     }
   };
 
-  const handleEdit = async reservation => {
-    // Pedimos nuevos horarios al usuario
-    const newStart = prompt(
-      'Nuevo inicio (YYYY-MM-DDThh:mm)',
-      reservation.startTime.slice(0,16)
+  if (mode) {
+    const reservation = reservas.find(r => r.id === mode.id);
+    return (
+      <EditReservation
+        reservation={reservation}
+        onDone={updated => {
+          setReservas(rs => rs.map(r => r.id === updated.id ? updated : r));
+          setMode(null);
+        }}
+        onCancel={() => setMode(null)}
+      />
     );
-    if (!newStart) return;
-    const newEnd = prompt(
-      'Nuevo fin (YYYY-MM-DDThh:mm)',
-      reservation.endTime.slice(0,16)
-    );
-    if (!newEnd) return;
-
-    const token = localStorage.getItem('token');
-    const res = await fetch(`/api/reservations/${reservation.id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type':'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify({ startTime: newStart, endTime: newEnd })
-    });
-    if (res.ok) {
-      const updated = await res.json();
-      setList(lst => lst.map(r => r.id === updated.id ? updated : r));
-    } else {
-      const err = await res.json();
-      alert('Error al actualizar: ' + (err.message || res.status));
-    }
-  };
+  }
 
   return (
-    <div className='main-app'>
-      <div className="my-reservations">
-        <h2>Mis Reservas</h2>
-        {list.length === 0
-          ? <p>No tienes reservas aún.</p>
-          : list.map(r => (
-            <div key={r.id} className="reservation-card">
-              <p>Pista #{r.courtId}</p>
-              <p>Desde: {new Date(r.startTime).toLocaleString()}</p>
-              <p>Hasta: {new Date(r.endTime).toLocaleString()}</p>
-              <div className="reservation-actions">
-                <button
-                  className="btn-edit"
-                  onClick={() => handleEdit(r)}
-                >
-                  Editar horario
-                </button>
-                <button
-                  className="btn-delete"
-                  onClick={() => handleDelete(r.id)}
-                >
-                  Eliminar reserva
-                </button>
-              </div>
-            </div>
+    <div className="main-app">
+      <h2>Próximas Reservas</h2>
+      {próximas.length
+        ? próximas.map(r => (
+            <ReservationCard
+              key={r.id}
+              reservation={r}
+              onEdit={() => setMode({ id: r.id })}
+              onDelete={() => del(r.id)}
+            />
           ))
-        }
-      </div>
+        : <p>No tienes próximas reservas.</p>
+      }
+
+      <h2>Reservas Jugadas</h2>
+      {pasadas.length
+        ? pasadas.map(r => (
+            <ReservationCard key={r.id} reservation={r} readOnly />
+          ))
+        : <p>No tienes reservas pasadas.</p>
+      }
     </div>
   );
 }
-
-export default MyReservations;

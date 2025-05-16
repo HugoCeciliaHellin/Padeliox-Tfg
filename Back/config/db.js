@@ -13,7 +13,12 @@ const sequelize = new Sequelize(
     host: process.env.DB_HOST,
     port: DB_PORT,
     dialect: 'mysql',
-    logging: false            // desactiva logs SQL en producción
+    logging: false,            // desactiva logs SQL en producción
+    timezone: '+02:00',           // <<< <- almacena/lee en UTC+2
+    dialectOptions: {
+      dateStrings: true,          // recibe DATETIME como strings
+      typeCast: true
+    }  
   }
 );
 

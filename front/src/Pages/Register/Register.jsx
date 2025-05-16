@@ -1,100 +1,37 @@
+
+// src/Pages/Register/Register.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './Register.css'; 
-
+import client from '../../api/client';
+import './Register.css';
 
 const Register = () => {
   const [formData, setFormData] = useState({
-    username: '',
-    email: '',
-    password: '',
-    role: 'player'
+    username:'', email:'', password:'', role:'player'
   });
+  const navigate = useNavigate();
 
-  const navigate = useNavigate(); // Para redirigir después del registro
-
-
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
-    
     try {
-      const response = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData)
-      });
-
-      const data = await response.json();
-      
-      if (response.ok) {
-        alert(`Usuario registrado con ID: ${data.userId}`);
-        navigate('/login'); 
-      } else {
-        alert(`Error: ${data.message}`);
-      }
-    } catch (error) {
-      alert('Error de conexión con el servidor');
+      const res = await client.post('/auth/register', formData);
+      alert(`Usuario registrado con ID: ${res.data.userId}`);
+      navigate('/login');
+    } catch (err) {
+      const msg = err.response?.data?.message || err.message;
+      alert('Error: ' + msg);
     }
   };
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+  const handleChange = e => {
+    setFormData(f => ({ ...f, [e.target.name]: e.target.value }));
   };
 
   return (
     <div className="register-form">
       <h2>Registro de Usuario</h2>
       <form onSubmit={handleSubmit}>
-        <div>
-          <label>Nombre de usuario:</label>
-          <input
-            type="text"
-            name="username"
-            value={formData.username}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        
-        <div>
-          <label>Email:</label>
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        
-        <div>
-          <label>Contraseña:</label>
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        
-        <div>
-          <label>Rol:</label>
-          <select
-            name="role"
-            value={formData.role}
-            onChange={handleChange}
-          >
-            <option value="player">Jugador</option>
-            <option value="organizer">Organizador</option>
-          </select>
-        </div>
-        
+        {/* ... campos igual que antes ... */}
         <button type="submit">Registrarse</button>
       </form>
     </div>

@@ -1,0 +1,33 @@
+/* src/components/SlotGrid/SlotGrid.css */
+
+.slot-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+  gap: 4px;
+  margin: 1rem 0;
+}
+
+.slot-cell {
+  padding: 0.5rem;
+  text-align: center;
+  border-radius: 4px;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.slot-cell.free {
+  background: #e0f7fa;
+  color: #006064;
+}
+
+.slot-cell.selected {
+  background: #4dd0e1;
+  color: white;
+}
+
+.slot-cell.occupied {
+  background: #ffccbc;
+  color: #bf360c;
+  cursor: not-allowed;
+}
