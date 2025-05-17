@@ -55,18 +55,47 @@ const login = async (req, res) => {
     }
 
     // Generar token JWT
-    const token = jwt.sign(
-      { userId: user.id, role: user.role, email: user.email },
-      process.env.JWT_SECRET,
-      { expiresIn: '10h' } //El token expira en 10 horas
-    );
+    const accessToken = jwt.sign(
+    { userId: user.id, role: user.role, email: user.email },
+    process.env.JWT_SECRET,
+    { expiresIn: '10h' }
+  );
 
-    res.json({ token, userId: user.id, role: user.role, username: user.username, email: user.email });
+  // 2️⃣ Refresh token de larga vida
+  const refreshToken = jwt.sign(
+    { userId: user.id },
+    process.env.REFRESH_TOKEN_SECRET,
+    { expiresIn: '7d' }
+  );
 
+  // 3️⃣ Guardar el refresh token en tu base de datos o cache
+  await User.update({ refreshToken }, { where: { id: user.id } });
+
+  // 4️⃣ Enviar ambos al cliente
+  res.json({ accessToken, refreshToken, userId: user.id, role: user.role, username: user.username });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Error en el servidor' });
   }
 };
+const refreshAccessToken = async (req,res) => {
+  const { refreshToken } = req.body;
+  if (!refreshToken) return res.sendStatus(401);
 
-module.exports = { register, login };
+  let payload;
+  try { payload = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET); }
+  catch { return res.sendStatus(403); }
+
+  const user = await User.findByPk(payload.userId);
+  if (!user || user.refreshToken !== refreshToken) return res.sendStatus(403);
+
+  const newAccessToken = jwt.sign(
+    { userId: user.id, role: user.role, email: user.email },
+    process.env.JWT_SECRET,
+    { expiresIn: '10h' }
+  );
+  res.json({ accessToken: newAccessToken });
+};
+
+
+module.exports = { register, login, refreshAccessToken };

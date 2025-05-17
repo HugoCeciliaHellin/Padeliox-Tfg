@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import client from '../../api/client';
 import './Login.css';
 
-const Login = () => {
+export default function Login() {
   const [formData, setFormData] = useState({ email:'', password:'' });
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -14,12 +14,25 @@ const Login = () => {
     e.preventDefault();
     try {
       const res = await client.post('/auth/login', formData);
-      const data = res.data;
-      login(data);
+      const {
+        accessToken,
+        userId,
+        role,
+        username,
+        email
+      } = res.data;
+      // Aquí pasamos el JWT correcto en la propiedad token
+      login({
+        token: accessToken,
+        userId,
+        role,
+        username,
+        email
+      });
       navigate('/app');
     } catch (err) {
       const msg = err.response?.data?.message || err.message;
-      alert('Error: ' + msg);
+      alert('Error de autenticación: ' + msg);
     }
   };
 
@@ -33,18 +46,20 @@ const Login = () => {
       <form onSubmit={handleSubmit}>
         <div>
           <label>Email:</label>
-          <input type="email" name="email" value={formData.email}
-            onChange={handleChange} required />
+          <input type="email" name="email"
+                 value={formData.email}
+                 onChange={handleChange}
+                 required />
         </div>
         <div>
           <label>Contraseña:</label>
-          <input type="password" name="password" value={formData.password}
-            onChange={handleChange} required />
+          <input type="password" name="password"
+                 value={formData.password}
+                 onChange={handleChange}
+                 required />
         </div>
         <button type="submit">Ingresar</button>
       </form>
     </div>
   );
-};
-
-export default Login;
+} 

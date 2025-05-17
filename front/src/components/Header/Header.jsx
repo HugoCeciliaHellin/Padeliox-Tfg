@@ -1,4 +1,3 @@
-// src/components/Header/Header.jsx
 import { Link, useNavigate } from 'react-router-dom';
 import Logo from '../../assets/Logo.jpg';
 import './Header.css';
@@ -9,40 +8,36 @@ const Header = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    logout();          // limpia token y user en el contexto
-    navigate('/login'); // redirige de inmediato al login (o a “/” si prefieres)
+    logout();
+    navigate('/login');
   };
 
   return (
     <header className="header">
       <div className="container">
-        <Link to="/">
+        <Link to="/" className="logo-container">
           <img src={Logo} alt="PADELIIOX" className="logo" />
         </Link>
+
         <nav>
           <ul>
             {user ? (
               <>
-                <li><Link to="/app/reservar">Reservar Pistas</Link></li>
-                <li><Link to="/app/reservas">Mis Reservas</Link></li>
+                <li><Link to="/app/reservar">Reservar</Link></li>
+                <li><Link to="/app/reservas">Reservas</Link></li>
                 <li><Link to="/app/perfil">Perfil</Link></li>
-                <li><span>Usuario: {user.username}</span></li>
-                <li><span>Rol: {user.role}</span></li>
-                <li>
-                  <Link to="/app" className="btn-home">
-                    Inicio
-                  </Link>
-                </li>
+                <li className="user-info">👤 {user.username}</li>
+                <li className="role-info">🎾 {user.role}</li>
                 <li>
                   <button onClick={handleLogout} className="btn-logout">
-                    Cerrar Sesión
+                    Salir
                   </button>
                 </li>
               </>
             ) : (
               <>
-                <li><Link to="/login">Iniciar Sesión</Link></li>
-                <li><Link to="/register">Registrarse</Link></li>
+                <li><Link to="/login" className="btn-login">Iniciar sesión</Link></li>
+                <li><Link to="/register" className="btn-register">Registrarse</Link></li>
               </>
             )}
           </ul>

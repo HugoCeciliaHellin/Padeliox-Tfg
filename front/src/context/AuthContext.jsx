@@ -7,20 +7,25 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const saved = localStorage.getItem('user');
-    if (saved) setUser(JSON.parse(saved));
-  }, []);
+  const savedUser = JSON.parse(localStorage.getItem('user'));
+  if (savedUser) setUser(savedUser);
+}, []);
 
-  const login = (data) => {
-    setUser(data);
-    localStorage.setItem('token', data.token);
-    localStorage.setItem('user', JSON.stringify(data));
+
+  const login = ({ token, userId, role, username, email }) => {
+    // 1️⃣ save the raw JWT in localStorage
+    localStorage.setItem('token', token);
+
+    // 2️⃣ save user profile separately
+    const u = { userId, role, username, email };
+    localStorage.setItem('user', JSON.stringify(u));
+    setUser(u);
   };
 
   const logout = () => {
-    setUser(null);
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    setUser(null);
   };
 
   return (
@@ -30,5 +35,4 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-// Hook para consumir el contexto
 export const useAuth = () => useContext(AuthContext);

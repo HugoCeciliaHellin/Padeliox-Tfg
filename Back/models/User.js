@@ -1,3 +1,4 @@
+// models/User.js
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/db');
 
@@ -17,6 +18,10 @@ const User = sequelize.define('User', {
   role: {
     type: DataTypes.ENUM('organizer', 'player'),
     allowNull: false
+  },
+  refreshToken: {                   // <–– nuevo
+    type: DataTypes.STRING,
+    allowNull: true
   }
 });
 

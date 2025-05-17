@@ -10,8 +10,9 @@ export default function ReservationCard({ reservation, onEdit, onDelete, readOnl
   return (
     <div className="reservation-card">
       <p><strong>Pista #{reservation.courtId}</strong></p>
-      <p>Desde: {reservation.startTime.replace('T',' ')}</p>
-      <p>Hasta: {reservation.endTime.replace('T',' ')}</p>
+      <p>Desde: {reservation.startTime}</p>
+      <p>Hasta: {reservation.endTime}</p>
+
 
       {!readOnly && (
         <div className="reservation-actions">

@@ -1,14 +1,17 @@
-// src/Pages/Homepage/Homepage.jsx
 import './Homepage.css';
-import Logo from '../../assets/Logo.jpg'; 
+import Logo from '../../assets/Logo.jpg';
 
 const Homepage = () => (
   <section className="homepage">
-    <img src={Logo} alt="Logo de Padeliox"/>
-    <h1>¡Bienvenido a PADELIIOX!</h1>
-    <p>La plataforma definitiva para gestionar y participar en torneos de pádel.</p>
+    <div className="homepage-container">
+      <img src={Logo} alt="Padeliox Logo" className="homepage-logo" />
+      <h1>¡Bienvenido a <span>PADELIIOX!</span></h1>
+      <p>
+        Gestiona, participa y disfruta del pádel de manera rápida y sencilla. 
+        La plataforma ideal para organizar torneos y reservas con comodidad y seguridad.
+      </p>
+    </div>
   </section>
-
 );
 
 export default Homepage;

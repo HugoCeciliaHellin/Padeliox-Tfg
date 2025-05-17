@@ -1,4 +1,3 @@
-// src/Pages/MainApp/MainApp.jsx
 import { Outlet, Navigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import './MainApp.css';
@@ -6,17 +5,37 @@ import './MainApp.css';
 const MainApp = () => {
   const { user } = useAuth();
 
-  // Si no hay user, redirigimos al login (o a /)
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
+  if (!user) return <Navigate to="/" replace />;
 
   return (
-    <div className="main-app">
-      <h1>👋 ¡Hola {user.username}!</h1>
-      <p>Tu rol es <strong>{user.role}</strong></p>
+    <section className="main-app">
+      <div className="welcome-box">
+        <h1>👋 Hola, {user.username}</h1>
+        <p>Listo para disfrutar del pádel. ¡Buena suerte en tu próximo partido!</p>
+      </div>
+
+      <div className="info-cards">
+        <div className="info-card">
+          <div className="info-icon">🎾</div>
+          <h3>Reserva tu pista favorita</h3>
+          <p>Accede al menú superior para elegir día, hora y superficie.</p>
+        </div>
+
+        <div className="info-card">
+          <div className="info-icon">📅</div>
+          <h3>Organiza tu agenda</h3>
+          <p>Consulta y administra todas tus reservas fácilmente.</p>
+        </div>
+
+        <div className="info-card">
+          <div className="info-icon">🏆</div>
+          <h3>Prepárate para competir</h3>
+          <p>Explora próximos torneos y mejora tu clasificación.</p>
+        </div>
+      </div>
+
       <Outlet />
-    </div>
+    </section>
   );
 };
 

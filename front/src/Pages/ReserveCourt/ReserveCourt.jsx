@@ -19,16 +19,44 @@ export default function ReserveCourt() {
   const [selected, setSelected] = useState(new Set());       // Set<string> de ISO-local
   const today = new Date().toISOString().slice(0, 10);
 
-  // ① Carga disponibilidad cada vez que cambie pista o fecha
-  useEffect(() => {
+
+    const fetchAvailability = () => {
     getCourtAvailability(id, date)
       .then(slots => {
-        setOccupied(slots);
-        setSelected(new Set());    // limpia selección al cambiar fecha
+        // convertir fechas con Z a ISO-local, para que cuadren con generateSlots()
+        const normalized = slots.map(o => ({
+          start: toLocalISO(new Date(o.start)),
+          end:   toLocalISO(new Date(o.end))
+        }));
+        setOccupied(normalized);
+        setSelected(new Set());
       })
       .catch(console.error);
-  }, [id, date]);
+  };
 
+  // ① Cada vez que cambien pista o fecha
+  useEffect(fetchAvailability, [id, date]);
+
+  // ④ Al confirmar, recargar *antes* de navegar
+  const handleSubmit = async e => {
+    e.preventDefault();
+    if (selected.size !== 1) {
+      return alert('Selecciona exactamente una franja de 1 hora.');
+    }
+    const slot = Array.from(selected)[0];
+    const start = slot;
+    const end   = toLocalISO(new Date(new Date(slot).getTime() + ONE_HOUR));
+
+    try {
+      await createReservation(id, start, end);
+      await fetchAvailability();      // recarga ocupadas al instante
+      // opcional: mostrar toast “Reservado”
+      navigate('/app/reservas');      // o, si prefieres quedarte en la misma página, comentar esta línea
+    } catch (err) {
+      alert('❌ ' + (err.response?.data?.message || err.message));
+    }
+  };
+  
   // ② Genera todos los slots de 1h
   const slots = generateSlots({
     date,
@@ -47,26 +75,7 @@ export default function ReserveCourt() {
     });
   };
 
-  // ④ Submit
-  const handleSubmit = async e => {
-    e.preventDefault();
-    if (selected.size !== 1) {
-      return alert('Selecciona exactamente una franja de 1 hora.');
-    }
-    const slot = Array.from(selected)[0];
-    const start = slot;
-    const end = toLocalISO(new Date(new Date(slot).getTime() + ONE_HOUR));
-
-    try {
-      await createReservation(id, start, end);
-      navigate('/app/reservas');
-    } catch (err) {
-      const msg = err.response?.data?.message || err.message;
-      alert('❌ ' + msg);
-      // forzar recarga de ocupadas
-      setDate(d => d);
-    }
-  };
+  
 
   return (
     <div className="main-app reserve-court">

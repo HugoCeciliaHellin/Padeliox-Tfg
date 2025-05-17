@@ -15,13 +15,17 @@ export default function EditReservation({ reservation, onDone, onCancel }) {
   const date = reservation.startTime.slice(0, 10);
 
   // ① Carga ocupadas y precalcula tus propios slots
-  useEffect(() => {
-    getCourtAvailability(reservation.courtId, date)
-      .then(all => {
-        // Filtra las franjas que no sean tu propia reserva
-        const blocked = all.filter(o =>
-          !(o.end <= reservation.startTime || o.start >= reservation.endTime)
-        );
+ useEffect(() => {
+  getCourtAvailability(reservation.courtId, date)
+    .then(all => {
+      // normaliza las fechas y filtra tu propia reserva
+      const norm = all.map(o=>({
+        start: toLocalISO(new Date(o.start)),
+        end:   toLocalISO(new Date(o.end))
+      }));
+      const blocked = norm.filter(o =>
+        !(o.start === reservation.startTime && o.end === reservation.endTime)
+      );
         setOccupied(blocked);
 
         // Preselecciona tus slots actuales
