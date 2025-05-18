@@ -29,9 +29,25 @@ router.put('/:id',
   body('endTime').optional().isISO8601(),
   reservationController.updateReservation
 );
+//Borrar reservas pasadas
+router.delete('/past', reservationController.deletePastReservations);
+
+// Borrar resultado de partida
+router.delete('/:id/result', reservationController.removeMatchResult);
 
 // borrar reserva
 router.delete('/:id', reservationController.deleteReservation);
+
+
+
+
+
+router.put(
+  '/:id/result',
+  body('result').isIn(['win','loss']),
+  reservationController.setMatchResult
+);
+
 
 
 module.exports = router;

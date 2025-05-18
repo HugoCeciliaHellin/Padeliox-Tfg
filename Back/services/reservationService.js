@@ -118,11 +118,40 @@ async function getAvailability(courtId, date) {
   return ocupadas;
 }
 
+async function deletePastReservations(userId) {
+  const now = new Date();
+  // destruye todas las reservas cuyo endTime ≤ ahora
+  const count = await Reservation.destroy({
+    where: {
+      userId,
+      endTime: { [Op.lte]: now },
+      result: null // solo si no tienen resultado asignado
+    }
+  });
+  return count;
+}
+
+async function setMatchResult(id, userId, result) {
+  const r = await Reservation.findOne({ where: { id, userId } });
+  if (!r) throw Object.assign(new Error('Reserva no encontrada'), { status: 404 });
+  await r.update({ result });
+  return r;
+}
+
+async function getByIdAndUser(id, userId) {
+  return Reservation.findOne({ where: { id, userId } });
+}
+
+
 module.exports = {
   hasOverlap,
   createReservation,
   listMyReservations,
   updateReservation,
   deleteReservation,
-  getAvailability
+  getAvailability,
+  deletePastReservations,
+  setMatchResult,
+  getByIdAndUser
+
 };

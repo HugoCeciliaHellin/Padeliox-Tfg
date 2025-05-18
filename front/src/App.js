@@ -14,6 +14,8 @@ import MyReservations from './Pages/MyReservations/MyReservations';
 import Profile from './Pages/Profile/Profile';
 import PrivacyPolicy from './Pages/FooterPages/PrivacyPolicy';
 import TermsOfService from './Pages/FooterPages/TermsOfService';
+import RegisterMatch from './Pages/RegisterMatch/RegisterMatch';
+import Statistics from './Pages/Statistics/Statistics';
 import './App.css';
 import './Pages/MainApp/MainApp.css';
 
@@ -52,6 +54,8 @@ function App() {
           <Route path="reservar/:id" element={<ReserveCourt />} />
           <Route path="reservas" element={<MyReservations />} />
           <Route path="perfil" element={<Profile />} />
+          <Route path="registro" element={<RegisterMatch />} />
+          <Route path="estadisticas" element={<Statistics />} />
         </Route>
 
         {/* Cualquier ruta desconocida lleva a /app (si autenticado) o a / (si no autenticado) */}

@@ -22,3 +22,11 @@
 .btn-delete { background: #dc3545; color: #fff; }
 .btn-edit:hover { opacity: 0.9 }
 .btn-delete:hover { opacity: 0.9 }
+
+
+/* src/components/ReservationCard/ReservationCard.css */
+/* Tarjeta registrada */
+.reservation-card--registered {
+  background-color: #e0f7fa;
+  border-left: 4px solid var(--accent-color);
+}

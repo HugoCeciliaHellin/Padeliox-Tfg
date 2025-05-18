@@ -1,29 +1,32 @@
-// src/Pages/ReserveCourt/ReserveCourt.jsx
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import SlotGrid from '../../components/SlotGrid/SlotGrid';
 import { generateSlots } from '../../utils/slots';
 import { toLocalISO } from '../../utils/date';
-import { getCourtAvailability } from '../../api/courts';
-import { createReservation } from '../../api/reservations';
+import { getCourtAvailability, getCourtById } from '../../api/courts';
 import './ReserveCourt.css';
+import { loadStripe } from '@stripe/stripe-js';
 
+const stripePromise = loadStripe('pk_test_…');
 const ONE_HOUR = 60 * 60 * 1000;
 
 export default function ReserveCourt() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
-  const [occupied, setOccupied] = useState([]);              // [{start,end},…]
-  const [selected, setSelected] = useState(new Set());       // Set<string> de ISO-local
-  const today = new Date().toISOString().slice(0, 10);
+  const [court, setCourt] = useState(null);
+  const [date, setDate] = useState(new Date().toISOString().slice(0,10));
+  const [occupied, setOccupied] = useState([]);
+  const [selected, setSelected] = useState(new Set());
+  const today = new Date().toISOString().slice(0,10);
 
+  useEffect(() => {
+    getCourtById(id).then(setCourt);
+  }, [id]);
 
-    const fetchAvailability = () => {
+  useEffect(() => {
     getCourtAvailability(id, date)
       .then(slots => {
-        // convertir fechas con Z a ISO-local, para que cuadren con generateSlots()
         const normalized = slots.map(o => ({
           start: toLocalISO(new Date(o.start)),
           end:   toLocalISO(new Date(o.end))
@@ -32,75 +35,44 @@ export default function ReserveCourt() {
         setSelected(new Set());
       })
       .catch(console.error);
-  };
+  }, [id, date]);
 
-  // ① Cada vez que cambien pista o fecha
-  useEffect(fetchAvailability, [id, date]);
-
-  // ④ Al confirmar, recargar *antes* de navegar
   const handleSubmit = async e => {
     e.preventDefault();
-    if (selected.size !== 1) {
-      return alert('Selecciona exactamente una franja de 1 hora.');
-    }
+    if (selected.size !== 1) return alert('Selecciona 1 hora');
     const slot = Array.from(selected)[0];
     const start = slot;
-    const end   = toLocalISO(new Date(new Date(slot).getTime() + ONE_HOUR));
+    const end   = toLocalISO(new Date(new Date(slot).getTime()+ONE_HOUR));
+    const amount = court.price; // importe en euros
 
-    try {
-      await createReservation(id, start, end);
-      await fetchAvailability();      // recarga ocupadas al instante
-      // opcional: mostrar toast “Reservado”
-      navigate('/app/reservas');      // o, si prefieres quedarte en la misma página, comentar esta línea
-    } catch (err) {
-      alert('❌ ' + (err.response?.data?.message || err.message));
-    }
-  };
-  
-  // ② Genera todos los slots de 1h
-  const slots = generateSlots({
-    date,
-    openTime: '08:00',
-    closeTime: '22:00',
-    intervalMs: ONE_HOUR
-  });
-
-  // ③ Toggle de selección
-  const toggle = slot => {
-    setSelected(s => {
-      const next = new Set(s);
-      if (next.has(slot)) next.delete(slot);
-      else next.add(slot);
-      return next;
+    const res = await fetch('/api/payments/create-session', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ courtId: id, startTime: start, endTime: end, amount })
     });
+    const { url } = await res.json();
+    const stripe = await stripePromise;
+    await stripe.redirectToCheckout({ sessionId: url.split('session_id=')[1] });
   };
 
-  
+  const slots = generateSlots({
+    date, openTime: '08:00', closeTime: '22:00', intervalMs: ONE_HOUR
+  });
 
   return (
     <div className="main-app reserve-court">
-      <h2>Reservar pista #{id}</h2>
+      <h2>Reservar pista #{id} – {court?.clubName}</h2>
       <label>
         Fecha:
-        <input
-          type="date"
-          value={date}
-          onChange={e => setDate(e.target.value)}
-          min={today}
-        />
+        <input type="date" value={date} onChange={e=>setDate(e.target.value)} min={today}/>
       </label>
-
       <SlotGrid
         slots={slots}
         occupiedSlots={occupied}
         selectedSlots={selected}
-        onToggle={toggle}
+        onToggle={s=>!occupied.some(o=>s>=o.start&&s<o.end)&&setSelected(new Set([s]))}
       />
-
-      <button 
-        onClick={handleSubmit} 
-        disabled={selected.size !== 1}
-      >
+      <button onClick={handleSubmit} disabled={selected.size!==1}>
         Confirmar 1 hora
       </button>
     </div>

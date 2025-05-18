@@ -1,22 +1,25 @@
 // src/components/ReservationCard/ReservationCard.jsx
 import React from 'react';
 import './ReservationCard.css';
-import { toLocalISO } from '../../utils/date';
 
-export default function ReservationCard({ reservation, onEdit, onDelete, readOnly }) {
-  // convierte "2025-05-14T21:00" → "2025-05-14 21:00"
-  const fmt = iso => toLocalISO(iso).replace('T', ' ');
-
+export default function ReservationCard({
+  reservation,
+  onEdit,
+  onDelete,
+  readOnly,
+  registered = false
+}) {
   return (
-    <div className="reservation-card">
+    <div className={
+      `reservation-card${registered ? ' reservation-card--registered' : ''}`
+    }>
       <p><strong>Pista #{reservation.courtId}</strong></p>
-      <p>Desde: {reservation.startTime}</p>
-      <p>Hasta: {reservation.endTime}</p>
-
+      <p>Desde: {reservation.startTime.replace('T', ' ')}</p>
+      <p>Hasta: {reservation.endTime.replace('T', ' ')}</p>
 
       {!readOnly && (
         <div className="reservation-actions">
-          <button className="btn-edit"   onClick={onEdit}>Editar</button>
+          <button className="btn-edit" onClick={onEdit}>Editar</button>
           <button className="btn-delete" onClick={onDelete}>Eliminar</button>
         </div>
       )}

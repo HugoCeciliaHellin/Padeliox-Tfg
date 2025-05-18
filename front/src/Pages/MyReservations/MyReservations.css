@@ -85,3 +85,12 @@
   background-color: #c82333;
   transform: translateY(-1px);
 }
+
+.btn-clear-all {
+  background: var(--accent-color);
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+}
+.btn-clear-all:hover {
+  background: var(--hover-color);
+}

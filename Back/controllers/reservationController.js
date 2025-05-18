@@ -1,5 +1,6 @@
 //controllers/reservationController.js
 const reservationService = require('../services/reservationService');
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const { toLocalISO }      = require('../utils/date');
 
 
@@ -42,18 +43,20 @@ exports.updateReservation = async (req, res) => {
   }
 };
 
-exports.deleteReservation = async (req, res) => {
+exports.deleteReservation = async (req, res, next) => {
   try {
-    await reservationService.deleteReservation(
-      req.params.id,
-      req.user.userId
-    );
+    const r = await reservationService.getByIdAndUser(req.params.id, req.user.userId);
+    if (r.paymentIntentId && !r.refunded) {
+      await stripe.refunds.create({ payment_intent: r.paymentIntentId });
+      await r.update({ refunded: true });
+    }
+    await reservationService.deleteReservation(req.params.id, req.user.userId);
     res.status(204).send();
   } catch (err) {
     const status = err.status || 404;
     res.status(status).json({ message: err.message });
   }
-}
+};
 
 exports.getAvailability = async (req, res) => {
   const rows = await reservationService.getAvailability(
@@ -65,3 +68,40 @@ exports.getAvailability = async (req, res) => {
     end:   toLocalISO(r.endTime)
   })));
 };
+
+exports.deletePastReservations = async (req, res, next) => {
+  try {
+    const deletedCount = await reservationService.deletePastReservations(req.user.userId);
+    res.json({ deletedCount });
+  } catch (err) {
+     next(err);
+   }
+ }
+exports.setMatchResult = async (req, res, next) => {
+  try {
+    const updated = await reservationService.setMatchResult(
+      req.params.id,
+      req.user.userId,
+      req.body.result
+    );
+    res.json({
+      id: updated.id,
+      result: updated.result
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+exports.removeMatchResult = async (req, res, next) => {
+  try {
+    const updated = await reservationService.setMatchResult(
+      req.params.id,
+      req.user.userId,
+      null
+    );
+    res.json({ id: updated.id, result: updated.result });
+  } catch (err) {
+    next(err);
+  }
+};
+

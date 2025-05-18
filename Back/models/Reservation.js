@@ -28,7 +28,21 @@ const Reservation = sequelize.define('Reservation', {
     type: DataTypes.DATE,
     allowNull: false,
     defaultValue: DataTypes.NOW
-  }
+  }, 
+  result: {
+    type: DataTypes.ENUM('win','loss'),
+    allowNull: true,
+    defaultValue: null
+  },
+   paymentIntentId: { 
+    type: DataTypes.STRING,
+    allowNull: true 
+  },
+  refunded: { 
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false 
+  },
 }, {
   tableName: 'reservations',
   updatedAt: false  // no usamos updatedAt

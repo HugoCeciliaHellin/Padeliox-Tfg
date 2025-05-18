@@ -7,66 +7,69 @@ import './Courts.css';
 function Courts() {
   const [courts, setCourts] = useState([]);
   const [filters, setFilters] = useState({
-    search: '', maxPrice: '', surface: '', hasLights: '', hasLockerRoom: ''
+    search: '',
+    maxPrice: '',
+    surface: ''
   });
 
+  // Cada vez que cambian filtros, recarga pistas
   useEffect(() => {
     getCourts(filters).then(setCourts);
-    
   }, [filters]);
-  
 
   const handleFilterChange = e => {
-    setFilters(f => ({ ...f, [e.target.name]: e.target.value }));
+    const { name, value } = e.target;
+    setFilters(f => ({ ...f, [name]: value }));
+  };
+
+  const resetFilters = () => {
+    setFilters({ search: '', maxPrice: '', surface: '' });
   };
 
   return (
-    <div className='main-app'>
-    <div className="courts-page">
+    <div className="main-app courts-page">
       <aside className="filters">
+        <h3>Filtros</h3>
+
         <input
-          type="text" name="search" placeholder="Ciudad o club..."
-          value={filters.search} onChange={handleFilterChange}
+          type="text"
+          name="search"
+          placeholder="Ciudad o club…"
+          value={filters.search}
+          onChange={handleFilterChange}
         />
+
         <input
-          type="number" name="maxPrice" placeholder="Precio máx."
-          value={filters.maxPrice} onChange={handleFilterChange}
+          type="number"
+          name="maxPrice"
+          placeholder="Precio máx. (€)"
+          value={filters.maxPrice}
+          onChange={handleFilterChange}
         />
-        <select name="surface" value={filters.surface} onChange={handleFilterChange}>
+
+        <select
+          name="surface"
+          value={filters.surface}
+          onChange={handleFilterChange}
+        >
           <option value="">Superficie</option>
           <option value="césped">Césped</option>
           <option value="hormigón">Hormigón</option>
           <option value="moqueta">Moqueta</option>
           <option value="césped sintético">Césped sintético</option>
         </select>
-        <label>
-          <input type="checkbox"
-            name="hasLights"
-            checked={filters.hasLights === 'true'}
-            onChange={e => setFilters(f => ({
-              ...f,
-              hasLights: e.target.checked.toString()
-            }))}
-          />
-          Iluminación
-        </label>
-        <label>
-          <input type="checkbox"
-            name="hasLockerRoom"
-            checked={filters.hasLockerRoom === 'true'}
-            onChange={e => setFilters(f => ({
-              ...f,
-              hasLockerRoom: e.target.checked.toString()
-            }))}
-          />
-          Vestuarios
-        </label>
+
+        <button className="btn-reset" onClick={resetFilters}>
+          Restablecer filtros
+        </button>
       </aside>
 
       <section className="court-results">
-        {courts.map(c => <CourtCard key={c.id} court={c} />)}
+        {courts.length
+          ? courts.map(c => <CourtCard key={c.id} court={c} />)
+          : <p className="no-results">No se encontraron pistas.</p>
+        }
       </section>
-    </div>
     </div>
   );
 }

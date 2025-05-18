@@ -8,3 +8,7 @@ export function getCourtAvailability(courtId, date) {
     .get(`/courts/${courtId}/availability`, { params: { date } })
     .then(r => r.data);
 }
+
+export function getCourtById(id) {
+  return client.get(`/courts/${id}`).then(r => r.data);
+}

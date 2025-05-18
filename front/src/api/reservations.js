@@ -34,3 +34,19 @@ export function updateReservation(id, start, end) {
 export function deleteReservation(id) {
   return client.delete(`/reservations/${id}`);
 }
+
+export function deletePastReservations() {
+  return client.delete('/reservations/past').then(r => r.data);
+}
+
+export function updateMatchResult(id, result) {
+  return client
+    .put(`/reservations/${id}/result`, { result })
+    .then(r => r.data);
+}
+
+export function deleteMatchResult(id) {
+  return client
+    .delete(`/reservations/${id}/result`)
+    .then(r => r.data);
+}

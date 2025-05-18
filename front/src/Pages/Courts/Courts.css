@@ -1,68 +1,95 @@
 /* Wrapper general */
 .main-app {
-    max-width: 900px;
-    margin: 2rem auto;
-    padding: 1.5rem;
-    background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-  }
-  
-  /* Layout de filtros + resultados */
+  max-width: 1000px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+/* Layout de filtros + resultados */
+.courts-page {
+  display: flex;
+  gap: 2rem;
+}
+
+/* Panel de filtros */
+.filters {
+  flex: 0 0 250px;
+  background: #f2f4f8;
+  padding: 1rem;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.filters h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: var(--primary-color);
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 0.5rem;
+}
+
+/* Inputs y selects */
+.filters input,
+.filters select {
+  width: 100%;
+  padding: 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  transition: border-color 0.2s;
+}
+
+.filters input:focus,
+.filters select:focus {
+  border-color: var(--accent-color);
+  outline: none;
+}
+
+/* Botón restablecer */
+.btn-reset {
+  margin-top: 0.5rem;
+  background: var(--accent-color);
+  color: var(--primary-color);
+  border: none;
+  padding: 0.6rem;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-reset:hover {
+  background: var(--hover-color);
+}
+
+/* Resultados en grid */
+.court-results {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Mensaje sin resultados */
+.no-results {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: #666;
+  font-style: italic;
+}
+
+/* Responsive: filtros arriba */
+@media (max-width: 768px) {
   .courts-page {
-    display: flex;
-    gap: 2rem;
-    flex-wrap: wrap;
-  }
-  
-  /* Panel de filtros */
-  .filters {
-    flex: 0 0 260px;
-    display: flex;
     flex-direction: column;
-    gap: 1rem;
-    background: #f9f9f9;
-    padding: 1rem;
-    border: 1px solid #e0e0e0;
-    border-radius: 6px;
   }
-  
-  /* Inputs y selects */
-  .filters input[type="text"],
-  .filters input[type="number"],
-  .filters select {
+  .filters {
+    order: -1;
     width: 100%;
-    padding: 0.5rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 0.95rem;
   }
-  
-  /* Checkboxes */
-  .filters label {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.95rem;
-    color: #333;
-  }
-  
-  /* Resultados en grid */
-  .court-results {
-    flex: 1;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1.5rem;
-  }
-  
-  /* Responsive: filtros arriba */
-  @media (max-width: 768px) {
-    .courts-page {
-      flex-direction: column;
-    }
-    .filters {
-      flex: 1;
-      order: -1;
-    }
-  }
-  
+}

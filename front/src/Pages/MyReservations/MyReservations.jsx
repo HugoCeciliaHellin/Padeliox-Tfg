@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import ReservationCard from '../../components/ReservationCard/ReservationCard';
 import EditReservation from '../EditReservation/EditReservation';
-import { listMyReservations, deleteReservation } from '../../api/reservations';
+import { listMyReservations, deleteReservation, deletePastReservations } from '../../api/reservations';
 import './MyReservations.css';
 
 export default function MyReservations() {
@@ -42,6 +42,18 @@ export default function MyReservations() {
     );
   }
 
+  const delAllPast = async () => {
+    if (!window.confirm('¿Eliminar todas las reservas ya jugadas?')) return;
+    try {
+      const { deletedCount } = await deletePastReservations();
+      alert(`Se han eliminado ${deletedCount} reservas pasadas.`);
+      // filtra del estado solo las próximas
+      setReservas(rs => rs.filter(r => new Date(r.endTime).getTime() > Date.now()));
+    } catch (err) {
+      alert('Error al eliminar reservas pasadas: ' + (err.response?.data?.message || err.message));
+    }
+  };
+
   return (
     <div className="main-app">
       <h2>Próximas Reservas</h2>
@@ -58,10 +70,18 @@ export default function MyReservations() {
       }
 
       <h2>Reservas Jugadas</h2>
+
       {pasadas.length
-        ? pasadas.map(r => (
-            <ReservationCard key={r.id} reservation={r} readOnly />
-          ))
+        ? (
+          <>
+            <button className="btn-clear-all" onClick={delAllPast}>
+              Eliminar todas
+            </button>
+            {pasadas.map(r => (
+              <ReservationCard key={r.id} reservation={r} readOnly registered={!!r.result} />
+            ))}
+          </>
+        )
         : <p>No tienes reservas pasadas.</p>
       }
     </div>
