@@ -1,49 +1,56 @@
-// src/controllers/paymentController.js
+// controller/paymentController.js
 const paymentService = require('../services/paymentService');
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const reservationService = require('../services/reservationService');
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY.trim());
 
+// Crear sesión de pago
 exports.createSession = async (req, res, next) => {
   const { courtId, startTime, endTime, amount } = req.body;
-  const domain = process.env.FRONTEND_URL || 'http://localhost:3001';
+  const domain = process.env.FRONTEND_URL?.replace(/\/+$/, '') || 'http://localhost:3001';
+
+  // SOLO PASA EL session_id a la URL, nada más
+  const successUrl = `${domain}/app/reservas?session_id={CHECKOUT_SESSION_ID}`;
+  const cancelUrl = `${domain}/app/reservar/${courtId}?canceled=true`;
 
   try {
     const session = await paymentService.createCheckoutSession({
-      userId:    req.user.userId,
+      userId: req.user.userId,
       courtId,
       startTime,
       endTime,
       amount,
-      successUrl: `${domain}/app/reservas?paid=true`,
-      cancelUrl:  `${domain}/app/reservar/${courtId}?canceled=true`
+      successUrl,
+      cancelUrl
     });
-    res.json({ url: session.url });
+
+    res.json({ id: session.id });
   } catch (err) {
     next(err);
   }
 };
 
-exports.webhook = async (req, res) => {
-  let event;
+// Confirmar pago y crear reserva
+exports.completeSession = async (req, res, next) => {
   try {
-    event = stripe.webhooks.constructEvent(
-      req.body,
-      req.headers['stripe-signature'],
-      process.env.STRIPE_WEBHOOK_SECRET
-    );
-  } catch (err) {
-    console.error('Webhook signature verification failed:', err);
-    return res.status(400).send(`Webhook Error: ${err.message}`);
-  }
+    const { sessionId } = req.body;
+    const session = await stripe.checkout.sessions.retrieve(sessionId);
 
-  if (event.type === 'checkout.session.completed') {
-    try {
-      await paymentService.handleWebhook(event);
-    } catch (err) {
-      console.error('Error processing checkout.session.completed:', err);
-      return res.status(500).end();
+    // IMPRESCINDIBLE: SOLO crea la reserva si el pago está COMPLETADO
+    if (session.payment_status !== 'paid') {
+      console.log('🎟️ [STRIPE SESSION EN /payments/complete]', JSON.stringify(session, null, 2));
+      return res.status(402).json({ message: 'El pago no está completado. Estado: ' + session.payment_status });
     }
-  }
 
-  // Acknowledge receipt of all events
-  res.json({ received: true });
+    const { userId, courtId, startTime, endTime } = session.metadata;
+
+    const reservation = await reservationService.createReservation({
+      userId:    parseInt(userId, 10),
+      courtId:   parseInt(courtId, 10),
+      startTime,
+      endTime
+    });
+    res.status(201).json(reservation);
+  } catch (err) {
+    next(err);
+  }
 };

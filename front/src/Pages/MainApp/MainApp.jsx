@@ -1,3 +1,4 @@
+// src/Pages/MainApp/MainApp.jsx
 import { Outlet, Navigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import './MainApp.css';

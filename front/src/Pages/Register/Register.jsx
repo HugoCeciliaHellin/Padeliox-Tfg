@@ -1,24 +1,18 @@
 // src/Pages/Register/Register.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext'; // ① importar useAuth
 import { useNavigate } from 'react-router-dom';
-import client from '../../api/client';
 import './Register.css';
+import apiClient from '../../api/client';
+import { toast } from 'react-toastify';
 
 export default function Register() {
-  const { user } = useAuth();    // ② leer user
-  const navigate = useNavigate();
+  const { user }   = useAuth();
+  const navigate   = useNavigate();
   const [formData, setFormData] = useState({
-    username: '',
-    email: '',
-    password: '',
-    role: 'player'
+    username:'', email:'', password:'', role:'player'
   });
 
-  // 🔄 si ya hay user, vamos a /app
-  useEffect(() => {
-    if (user) navigate('/app', { replace: true });
-  }, [user, navigate]);
 
   const handleChange = e => {
     setFormData(f => ({ ...f, [e.target.name]: e.target.value }));
@@ -27,11 +21,11 @@ export default function Register() {
   const handleSubmit = async e => {
     e.preventDefault();
     try {
-      const res = await client.post('/auth/register', formData);
-      alert(`Usuario registrado con ID: ${res.data.userId}`);
+      const data = await apiClient.post('/auth/register', formData);
+      toast.success(`Usuario registrado con ID: ${data.userId}`);
       navigate('/login');
     } catch (err) {
-      alert('Error: ' + (err.response?.data?.message || err.message));
+      toast.error('Error: ' + (err.response?.data?.message || err.message));
     }
   };
 

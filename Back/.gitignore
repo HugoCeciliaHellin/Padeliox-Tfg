@@ -1,7 +1,8 @@
-# .gitignore
+# Back/.gitignore
+
 node_modules/
 
-# Variables de entorno (no subir al repositorio)
+# Variables sensibles
 .env
 
 # Logs
@@ -9,5 +10,5 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Sistema
+# Mac
 .DS_Store

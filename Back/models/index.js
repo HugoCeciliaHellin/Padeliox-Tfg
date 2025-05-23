@@ -11,6 +11,8 @@ Reservation.belongsTo(User, { foreignKey: 'userId' });
 Court.hasMany(Reservation, { foreignKey: 'courtId' });
 Reservation.belongsTo(Court, { foreignKey: 'courtId' });
 
+
+
 module.exports = {
   sequelize,
   User,

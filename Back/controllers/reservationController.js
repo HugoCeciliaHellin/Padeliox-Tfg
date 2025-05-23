@@ -105,3 +105,30 @@ exports.removeMatchResult = async (req, res, next) => {
   }
 };
 
+exports.listAllFutureReservations = async (req, res) => {
+  try {
+    const now = new Date();
+    // Incluye datos de usuario y pista si tienes asociaciones (ajusta según tus modelos)
+    const reservas = await Reservation.findAll({
+      where: { endTime: { [Op.gt]: now } },
+      include: [
+        { model: User, attributes: ['id', 'username', 'email'] },
+        { model: Court, attributes: ['id', 'clubName', 'city'] }
+      ],
+      order: [['startTime', 'ASC']]
+    });
+
+    // Opcional: mapea solo los campos que quieras mostrar
+    res.json(reservas.map(r => ({
+      id: r.id,
+      pista: r.Court ? r.Court.clubName : r.courtId,
+      ciudad: r.Court ? r.Court.city : '',
+      usuario: r.User ? r.User.username : r.userId,
+      email: r.User ? r.User.email : '',
+      inicio: r.startTime,
+      fin: r.endTime
+    })));
+  } catch (err) {
+    res.status(500).json({ message: 'Error buscando reservas', error: err.message });
+  }
+};

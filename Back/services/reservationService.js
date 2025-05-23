@@ -142,6 +142,12 @@ async function getByIdAndUser(id, userId) {
   return Reservation.findOne({ where: { id, userId } });
 }
 
+async function findByUserCourtAndTime({ userId, courtId, startTime, endTime }) {
+  return Reservation.findOne({
+    where: { userId, courtId, startTime, endTime }
+  });
+}
+
 
 module.exports = {
   hasOverlap,
@@ -152,6 +158,7 @@ module.exports = {
   getAvailability,
   deletePastReservations,
   setMatchResult,
+  findByUserCourtAndTime,
   getByIdAndUser
 
 };

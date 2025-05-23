@@ -1,3 +1,4 @@
+// src/Pages/Statistics/Statistics.jsx
 import { useState, useEffect } from 'react';
 import { listMyReservations } from '../../api/reservations';
 import {

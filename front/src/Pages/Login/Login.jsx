@@ -2,8 +2,9 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import client from '../../api/client';
+import apiClient from '../../api/client';
 import './Login.css';
+import { toast } from 'react-toastify';
 
 export default function Login() {
   const [formData, setFormData] = useState({ email:'', password:'' });
@@ -13,15 +14,13 @@ export default function Login() {
   const handleSubmit = async e => {
     e.preventDefault();
     try {
-      const res = await client.post('/auth/login', formData);
       const {
         accessToken,
         userId,
         role,
         username,
         email
-      } = res.data;
-      // Aquí pasamos el JWT correcto en la propiedad token
+      } = await apiClient.post('/auth/login', formData);
       login({
         token: accessToken,
         userId,
@@ -32,7 +31,7 @@ export default function Login() {
       navigate('/app');
     } catch (err) {
       const msg = err.response?.data?.message || err.message;
-      alert('Error de autenticación: ' + msg);
+      toast.error('Error de autenticación: ' + msg);
     }
   };
 

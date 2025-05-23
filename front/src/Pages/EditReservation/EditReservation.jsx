@@ -6,6 +6,7 @@ import { toLocalISO } from '../../utils/date';
 import { getCourtAvailability } from '../../api/courts';
 import { updateReservation } from '../../api/reservations';
 import './EditReservation.css';
+import { toast } from 'react-toastify';
 
 const ONE_HOUR = 60 * 60 * 1000;
 
@@ -61,7 +62,7 @@ export default function EditReservation({ reservation, onDone, onCancel }) {
   // ④ Guardar cambios
   const handleSave = async () => {
     if (selected.size !== 1) {
-      return alert('Selecciona UNA franja de 1 hora');
+      return toast.error('Selecciona UNA franja de 1 hora');
     }
 
     const arr = Array.from(selected).sort();
@@ -74,7 +75,7 @@ export default function EditReservation({ reservation, onDone, onCancel }) {
       onDone(updated);
     } catch (err) {
       const msg = err.response?.data?.message || err.message;
-      alert('Error: ' + msg);
+      toast.error('Error: ' + msg);
     }
   };
 

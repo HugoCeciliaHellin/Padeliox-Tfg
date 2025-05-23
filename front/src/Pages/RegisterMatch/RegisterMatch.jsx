@@ -1,6 +1,8 @@
+// src/Paes/RegisterMatch/RegisterMatch.jsx
 import { useState, useEffect } from 'react';
 import { listMyReservations, updateMatchResult, deleteMatchResult } from '../../api/reservations';
 import './RegisterMatch.css';
+import { toast } from 'react-toastify';
 
 export default function RegisterMatch() {
   const [pasadas, setPasadas] = useState([]);
@@ -16,7 +18,7 @@ export default function RegisterMatch() {
       await updateMatchResult(id, result);
       setPasadas(ps => ps.map(r => r.id===id?{...r, result}:r));
     } catch (e) {
-      alert('Error: '+(e.response?.data?.message||e.message));
+      toast.error('Error: '+(e.response?.data?.message||e.message));
     }
   };
   
@@ -25,7 +27,7 @@ export default function RegisterMatch() {
         await deleteMatchResult(id);
         setPasadas(ps => ps.map(r => r.id === id ? { ...r, result: null } : r));
     } catch (e) {
-        alert('Error: ' + (e.response?.data?.message || e.message));
+        toast.error('Error: ' + (e.response?.data?.message || e.message));
     }
 };
 

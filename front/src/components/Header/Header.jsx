@@ -12,13 +12,38 @@ const Header = () => {
     navigate('/login');
   };
 
+  // --- Header para ORGANIZER ---
+  if (user?.role === 'organizer') {
+    return (
+      <header className="header">
+        <div className="container">
+          <Link to="/app/global-reservations" className="logo-container">
+            <img src={Logo} alt="PADELIIOX" className="logo" />
+          </Link>
+          <nav>
+            <ul>
+              <li>
+                <Link to="/app/global-reservations">Reservas Globales</Link>
+              </li>
+              <li>
+                <button onClick={handleLogout} className="btn-logout">
+                  Salir
+                </button>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </header>
+    );
+  }
+
+  // --- Header para USERS normales ---
   return (
     <header className="header">
       <div className="container">
         <Link to="/" className="logo-container">
           <img src={Logo} alt="PADELIIOX" className="logo" />
         </Link>
-
         <nav>
           <ul>
             {user ? (

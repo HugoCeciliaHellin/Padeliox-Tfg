@@ -1,14 +1,16 @@
 // src/api/courts.js
-import client from './client';
+import { apiClient } from './client';
+
 export function getCourts(filters) {
-  return client.get('/courts', { params: filters }).then(r => r.data);
+  return apiClient.get('/courts', { params: filters });
 }
+
 export function getCourtAvailability(courtId, date) {
-  return client
-    .get(`/courts/${courtId}/availability`, { params: { date } })
-    .then(r => r.data);
+  return apiClient.get(`/courts/${courtId}/availability`, {
+    params: { date }
+  });
 }
 
 export function getCourtById(id) {
-  return client.get(`/courts/${id}`).then(r => r.data);
+  return apiClient.get(`/courts/${id}`);
 }

@@ -1,52 +1,43 @@
 // src/api/reservations.js
-import client from './client';
+import { apiClient } from './client';
 import { toLocalISO } from '../utils/date';
+
 export function listMyReservations() {
-  return client.get('/reservations').then(r => r.data);
+  return apiClient.get('/reservations');
 }
-export function createReservation(courtId, start, end) {
-  return client
-    .post('/reservations', { courtId, startTime: start, endTime: end })
-    // devolver directamente el objeto ya convertido
-    .then(r => {
-      const data = r.data;
-      return {
-        ...data,
-        startTime: toLocalISO(new Date(data.startTime)),
-        endTime:   toLocalISO(new Date(data.endTime)),
-      };
-    });
+
+export function createReservation(courtId, startTime, endTime) {
+  return apiClient
+    .post('/reservations', { courtId, startTime, endTime })
+    .then(data => ({
+      ...data,
+      startTime: toLocalISO(new Date(data.startTime)),
+      endTime:   toLocalISO(new Date(data.endTime)),
+    }));
 }
 
 export function updateReservation(id, start, end) {
-  return client
+  return apiClient
     .put(`/reservations/${id}`, { startTime: start, endTime: end })
-    .then(r => {
-      const data = r.data;
-      return {
-        ...data,
-        startTime: toLocalISO(new Date(data.startTime)),
-        endTime:   toLocalISO(new Date(data.endTime)),
-      };
-    });
-  }
+    .then(data => ({
+      ...data,
+      startTime: toLocalISO(new Date(data.startTime)),
+      endTime:   toLocalISO(new Date(data.endTime)),
+    }));
+}
 
 export function deleteReservation(id) {
-  return client.delete(`/reservations/${id}`);
+  return apiClient.delete(`/reservations/${id}`);
 }
 
 export function deletePastReservations() {
-  return client.delete('/reservations/past').then(r => r.data);
+  return apiClient.delete('/reservations/past');
 }
 
 export function updateMatchResult(id, result) {
-  return client
-    .put(`/reservations/${id}/result`, { result })
-    .then(r => r.data);
+  return apiClient.put(`/reservations/${id}/result`, { result });
 }
 
 export function deleteMatchResult(id) {
-  return client
-    .delete(`/reservations/${id}/result`)
-    .then(r => r.data);
+  return apiClient.delete(`/reservations/${id}/result`);
 }

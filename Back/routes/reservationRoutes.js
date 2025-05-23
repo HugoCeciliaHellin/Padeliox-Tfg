@@ -4,6 +4,8 @@ const router  = express.Router();
 const { body, validationResult } = require('express-validator');
 const auth    = require('../middlewares/authMiddleware');
 const reservationController = require('../controllers/reservationController');
+const organizerOnly = require('../middlewares/organizerOnly');
+
 
 router.use(auth);
 
@@ -38,6 +40,7 @@ router.delete('/:id/result', reservationController.removeMatchResult);
 // borrar reserva
 router.delete('/:id', reservationController.deleteReservation);
 
+router.get('/all/future', organizerOnly, reservationController.listAllFutureReservations);
 
 
 

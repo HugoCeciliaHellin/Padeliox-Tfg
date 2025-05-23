@@ -1,8 +1,12 @@
 import { render, screen } from '@testing-library/react';
 import App from './App';
+import { AuthProvider } from './context/AuthContext';
 
-test('renders learn react link', () => {
-  render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+test('muestra el botón de login si no hay usuario', () => {
+  render(
+    <AuthProvider>
+      <App />
+    </AuthProvider>
+  );
+  expect(screen.getByText(/Iniciar sesión/i)).toBeInTheDocument();
 });

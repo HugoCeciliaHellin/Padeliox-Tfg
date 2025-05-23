@@ -1,4 +1,3 @@
-// src/App.js
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
 import Header from './components/Header/Header';
@@ -16,6 +15,8 @@ import PrivacyPolicy from './Pages/FooterPages/PrivacyPolicy';
 import TermsOfService from './Pages/FooterPages/TermsOfService';
 import RegisterMatch from './Pages/RegisterMatch/RegisterMatch';
 import Statistics from './Pages/Statistics/Statistics';
+import GlobalReservations from './Pages/GlobalReservations/GlobalReservations';
+import { ToastContainer } from 'react-toastify';
 import './App.css';
 import './Pages/MainApp/MainApp.css';
 
@@ -24,30 +25,45 @@ function App() {
 
   return (
     <Router>
+      <ToastContainer position="top-right" autoClose={3000} />
       <Header />
 
       <Routes>
-        {/* RUTA RAÍZ: si estoy logueado, me lleva a /app, si no Homepage */}
+        {/* Si organizer va directo a global-reservations, sino flujo normal */}
         <Route
           path="/"
-          element={user ? <Navigate to="/app" replace /> : <Homepage />}
+          element={
+            user
+              ? user.role === 'organizer'
+                ? <Navigate to="/app/global-reservations" replace />
+                : <Navigate to="/app" replace />
+              : <Homepage />
+          }
         />
-
-        {/* Login y Register redirigen a /app si ya estoy logueado */}
         <Route
           path="/login"
-          element={user ? <Navigate to="/app" replace /> : <Login />}
+          element={user ? <Navigate to={user.role === 'organizer' ? "/app/global-reservations" : "/app"} replace /> : <Login />}
         />
         <Route
           path="/register"
-          element={user ? <Navigate to="/app" replace /> : <Register />}
+          element={user ? <Navigate to={user.role === 'organizer' ? "/app/global-reservations" : "/app"} replace /> : <Register />}
         />
 
-        {/* Páginas públicas del Footer, siempre accesibles */}
+        {/* Acceso solo para organizer */}
+        <Route
+          path="/app/global-reservations"
+          element={
+            user && user.role === 'organizer'
+              ? <GlobalReservations />
+              : <Navigate to="/" replace />
+          }
+        />
+
+        {/* Público Footer */}
         <Route path="/politica-privacidad" element={<PrivacyPolicy />} />
         <Route path="/terminos-servicio" element={<TermsOfService />} />
 
-        {/* Todo bajo /app requiere usuario autenticado */}
+        {/* Todo /app normal */}
         <Route path="/app" element={<PrivateRoute />}>
           <Route index element={<MainApp />} />
           <Route path="reservar" element={<Courts />} />
@@ -58,10 +74,16 @@ function App() {
           <Route path="estadisticas" element={<Statistics />} />
         </Route>
 
-        {/* Cualquier ruta desconocida lleva a /app (si autenticado) o a / (si no autenticado) */}
+        {/* Wildcard: Organizer -> global, sino /app o inicio */}
         <Route
           path="*"
-          element={user ? <Navigate to="/app" replace /> : <Navigate to="/" replace />}
+          element={
+            user
+              ? user.role === 'organizer'
+                ? <Navigate to="/app/global-reservations" replace />
+                : <Navigate to="/app" replace />
+              : <Navigate to="/" replace />
+          }
         />
       </Routes>
 
