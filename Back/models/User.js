@@ -6,23 +6,29 @@ const User = sequelize.define('User', {
   username: {
     type: DataTypes.STRING,
     allowNull: false,
+    unique: true,
+    validate: { notEmpty: true }
   },
   email: {
     type: DataTypes.STRING,
     allowNull: false,
+    unique: true,
+    validate: { isEmail: true }
   },
   password: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: false,
+    validate: { len: [6, 100] }
   },
   role: {
     type: DataTypes.ENUM('organizer', 'player'),
     allowNull: false
   },
-  refreshToken: {                   // <–– nuevo
-    type: DataTypes.STRING,
-    allowNull: true
-  }
+  refreshToken: { type: DataTypes.STRING }
+}, {
+  timestamps: true,
+  underscored: true,
+  tableName: 'users'
 });
 
 module.exports = User;

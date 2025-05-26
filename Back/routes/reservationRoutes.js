@@ -40,7 +40,6 @@ router.delete('/:id/result', reservationController.removeMatchResult);
 // borrar reserva
 router.delete('/:id', reservationController.deleteReservation);
 
-router.get('/all/future', organizerOnly, reservationController.listAllFutureReservations);
 
 
 

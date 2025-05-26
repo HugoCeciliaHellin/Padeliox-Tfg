@@ -7,7 +7,8 @@ import apiClient from '../../api/client';
 import { toast } from 'react-toastify';
 
 export default function Register() {
-  const { user }   = useAuth();
+  const [errors, setErrors] = useState({});
+
   const navigate   = useNavigate();
   const [formData, setFormData] = useState({
     username:'', email:'', password:'', role:'player'
@@ -25,8 +26,16 @@ export default function Register() {
       toast.success(`Usuario registrado con ID: ${data.userId}`);
       navigate('/login');
     } catch (err) {
-      toast.error('Error: ' + (err.response?.data?.message || err.message));
-    }
+  if (err.response?.data?.errors) {
+    // Express-validator: [{ msg, param }]
+    const fieldErrors = {};
+    err.response.data.errors.forEach(e => fieldErrors[e.param] = e.msg);
+    setErrors(fieldErrors);
+  } else {
+    setErrors({});
+    toast.error('Error: ' + (err.response?.data?.message || err.message));
+  }
+}
   };
 
   return (
@@ -42,6 +51,8 @@ export default function Register() {
             onChange={handleChange}        // ③ aquí
             required
           />
+            {errors.username && <div className="error">{errors.username}</div>}
+
         </div>
         <div>
           <label>Email:</label>
@@ -52,6 +63,8 @@ export default function Register() {
             onChange={handleChange}        // ③ aquí
             required
           />
+            {errors.email && <div className="error">{errors.email}</div>}
+
         </div>
         <div>
           <label>Contraseña:</label>
@@ -62,6 +75,8 @@ export default function Register() {
             onChange={handleChange}        // ③ aquí
             required
           />
+            {errors.password && <div className="error">{errors.password}</div>}
+
         </div>
         <div>
           <label>Rol:</label>

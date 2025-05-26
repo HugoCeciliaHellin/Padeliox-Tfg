@@ -2,15 +2,23 @@
 const paymentService = require('../services/paymentService');
 const reservationService = require('../services/reservationService');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY.trim());
+const { Court } = require('../models');
 
 // Crear sesión de pago
 exports.createSession = async (req, res, next) => {
-  const { courtId, startTime, endTime, amount } = req.body;
+  const { courtId, startTime, endTime } = req.body;
   const domain = process.env.FRONTEND_URL?.replace(/\/+$/, '') || 'http://localhost:3001';
 
-  // SOLO PASA EL session_id a la URL, nada más
+  // Consulta el precio real de la pista (backend authority)
+  const court = await Court.findByPk(courtId);
+  if (!court) return res.status(404).json({ message: 'Pista no encontrada' });
+
+  const amount = court.price;
   const successUrl = `${domain}/app/reservas?session_id={CHECKOUT_SESSION_ID}`;
   const cancelUrl = `${domain}/app/reservar/${courtId}?canceled=true`;
+
+  // ✅ Pon el console.log DESPUÉS de definir successUrl
+  console.log('SUCCESS_URL:', successUrl);
 
   try {
     const session = await paymentService.createCheckoutSession({
@@ -22,18 +30,21 @@ exports.createSession = async (req, res, next) => {
       successUrl,
       cancelUrl
     });
-
     res.json({ id: session.id });
   } catch (err) {
     next(err);
   }
 };
 
+
 // Confirmar pago y crear reserva
 exports.completeSession = async (req, res, next) => {
   try {
     const { sessionId } = req.body;
+    console.log('[STRIPE][COMPLETE] Recibido sessionId:', sessionId);
     const session = await stripe.checkout.sessions.retrieve(sessionId);
+    console.log('[STRIPE][COMPLETE] Sesión Stripe:', session);
+
 
     // IMPRESCINDIBLE: SOLO crea la reserva si el pago está COMPLETADO
     if (session.payment_status !== 'paid') {
@@ -51,6 +62,7 @@ exports.completeSession = async (req, res, next) => {
     });
     res.status(201).json(reservation);
   } catch (err) {
+    console.error('[STRIPE][COMPLETE] ERROR:', err);
     next(err);
   }
 };

@@ -1,11 +1,19 @@
 // src/Pages/GlobalReservations/GlobalReservations.jsx
-// src/Pages/GlobalReservations/GlobalReservations.jsx
 import { useEffect, useState } from 'react';
 import apiClient from '../../api/client';
 import './GlobalReservations.css';
 
 export default function GlobalReservations() {
   const [reservas, setReservas] = useState([]);
+
+  const handleExport = async () => {
+  const res = await apiClient.get('/global-reservations/export', { responseType: 'blob' });
+  const url = window.URL.createObjectURL(new Blob([res]));
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'reservas_padelliox.csv';
+  a.click();
+};
 
   useEffect(() => {
     apiClient.get('/global-reservations')
@@ -18,6 +26,7 @@ export default function GlobalReservations() {
   return (
     <div className="main-app">
       <h2>Reservas próximas (todas las pistas, todos los usuarios)</h2>
+        <button onClick={handleExport}>Exportar CSV</button>
       <div className="table-container">
         <table className="global-res-table">
           <thead>

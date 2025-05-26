@@ -72,8 +72,11 @@ const login = async (req, res) => {
   await User.update({ refreshToken }, { where: { id: user.id } });
 
   // 4️⃣ Enviar ambos al cliente
-  res.json({ accessToken, refreshToken, userId: user.id, role: user.role, username: user.username });
-  } catch (error) {
+res.json({ 
+  accessToken, 
+  refreshToken, 
+  user: { id: user.id, role: user.role, username: user.username, email: user.email }
+});  } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Error en el servidor' });
   }
@@ -97,5 +100,19 @@ const refreshAccessToken = async (req,res) => {
   res.json({ accessToken: newAccessToken });
 };
 
+// controllers/authController.js
+const logout = async (req, res) => {
+  const { refreshToken } = req.body;
+  if (!refreshToken) return res.status(400).json({ message: 'No token provided' });
+  try {
+    const user = await User.findOne({ where: { refreshToken } });
+    if (!user) return res.status(200).json({ message: 'Logout OK' }); // ya está out
+    await user.update({ refreshToken: null });
+    res.status(200).json({ message: 'Logout OK' });
+  } catch (e) {
+    res.status(500).json({ message: 'Error al hacer logout' });
+  }
+};
 
-module.exports = { register, login, refreshAccessToken };
+module.exports = { register, login, refreshAccessToken, logout };
+

@@ -9,31 +9,36 @@ import { toast } from 'react-toastify';
 export default function Login() {
   const [formData, setFormData] = useState({ email:'', password:'' });
   const { login } = useAuth();
+  const [errors, setErrors] = useState({});
+
+
   const navigate = useNavigate();
 
   const handleSubmit = async e => {
     e.preventDefault();
     try {
-      const {
-        accessToken,
-        userId,
-        role,
-        username,
-        email
-      } = await apiClient.post('/auth/login', formData);
-      login({
-        token: accessToken,
-        userId,
-        role,
-        username,
-        email
-      });
+      const { accessToken, user } = await apiClient.post('/auth/login', formData);
+login({
+  token: accessToken,
+  userId: user.id,
+  role: user.role,
+  username: user.username,
+  email: user.email
+});
+
       navigate('/app');
     } catch (err) {
-      const msg = err.response?.data?.message || err.message;
-      toast.error('Error de autenticación: ' + msg);
-    }
-  };
+  if (err.response?.data?.errors) {
+    // Express-validator: [{ msg, param }]
+    const fieldErrors = {};
+    err.response.data.errors.forEach(e => fieldErrors[e.param] = e.msg);
+    setErrors(fieldErrors);
+  } else {
+    setErrors({});
+    toast.error('Error: ' + (err.response?.data?.message || err.message));
+  }
+}
+  }
 
   const handleChange = e => {
     setFormData(f => ({ ...f, [e.target.name]: e.target.value }));
@@ -49,6 +54,8 @@ export default function Login() {
                  value={formData.email}
                  onChange={handleChange}
                  required />
+                 {errors.email && <div className="error">{errors.email}</div>}
+
         </div>
         <div>
           <label>Contraseña:</label>
@@ -56,9 +63,12 @@ export default function Login() {
                  value={formData.password}
                  onChange={handleChange}
                  required />
+                 {errors.password && <div className="error">{errors.password}</div>}
+
         </div>
         <button type="submit">Ingresar</button>
       </form>
     </div>
   );
-} 
+
+}

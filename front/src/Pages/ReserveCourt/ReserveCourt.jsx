@@ -43,9 +43,8 @@ const handleSubmit = async e => {
   const slot = Array.from(selected)[0];
   const start = slot;
   const end = toLocalISO(new Date(new Date(slot).getTime() + ONE_HOUR));
-  const amount = court.price;
   try {
-    const sessionId = await createCheckoutSession(id, start, end, amount);
+    const sessionId = await createCheckoutSession(id, start, end);
     const stripe = await stripePromise;
     await stripe.redirectToCheckout({ sessionId });
   } catch (err) {

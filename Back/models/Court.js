@@ -1,23 +1,24 @@
+// models/Court.js
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/db');
 
+const VALID_SURFACES = ['césped','hormigón','moqueta','césped sintético'];
+
 const Court = sequelize.define('Court', {
-  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-  clubName: { type: DataTypes.STRING, allowNull: false },
-  city: { type: DataTypes.STRING, allowNull: false },
-  surface: { type: DataTypes.STRING, allowNull: false },
-  price: { type: DataTypes.FLOAT, allowNull: false },
+  clubName: { type: DataTypes.STRING, allowNull: false, validate: { notEmpty: true }},
+  city: { type: DataTypes.STRING, allowNull: false, validate: { notEmpty: true }},
+  surface: { 
+    type: DataTypes.ENUM(...VALID_SURFACES), 
+    allowNull: false, 
+    validate: { isIn: [VALID_SURFACES] }
+  },
+  price: { type: DataTypes.FLOAT, allowNull: false, validate: { min: 1 }},
   hasLights: { type: DataTypes.BOOLEAN, defaultValue: false },
   hasLockerRoom: { type: DataTypes.BOOLEAN, defaultValue: false },
-  imageUrl: { type: DataTypes.STRING, allowNull: true }
+  imageUrl: { type: DataTypes.STRING }
 }, {
-  tableName: 'courts',
-  timestamps: false
+  timestamps: false,
+  tableName: 'courts'
 });
-
-// Asociación
-Court.associate = models => {
-  Court.hasMany(models.Reservation, { foreignKey: 'courtId', as: 'reservations' });
-};
 
 module.exports = Court;

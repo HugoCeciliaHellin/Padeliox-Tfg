@@ -32,6 +32,9 @@ const globalReservationRoutes = require('./routes/globalReservationRoutes');
 const app = express();
 const PORT = +process.env.PORT;
 const CORS_ORIGIN = process.env.CORS_ORIGIN;
+const rateLimit = require('./middlewares/rateLimit');
+app.use(rateLimit);
+
 
 app.use(express.json());
 app.use(cors({ origin: CORS_ORIGIN }));
@@ -41,6 +44,8 @@ app.use('/api/courts', courtRoutes);
 app.use('/api/reservations', reservationRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/global-reservations', globalReservationRoutes);
+
+
 
 // Error handler
 app.use((err, req, res, next) => {
