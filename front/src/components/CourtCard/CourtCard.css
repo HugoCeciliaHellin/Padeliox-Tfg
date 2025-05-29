@@ -1,41 +1,52 @@
-/* Card individual */
 .court-card {
-    background: #ffffff;
-    border: 1px solid #e0e0e0;
-    border-radius: 6px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-    overflow: hidden;
-    cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    display: flex;
-    flex-direction: column;
+  background: #fff8e1;
+  border-radius: 14px;
+  box-shadow: 0 2px 14px #0001;
+  padding: 1.3rem 1rem;
+  margin: 0.8rem 0;
+  transition: box-shadow 0.2s, background 0.18s;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.6em;
+}
+
+.court-card:hover, .court-card:focus {
+  background: #ffefaf;
+  box-shadow: 0 4px 22px #0003;
+}
+
+.court-img {
+  width: 100%;
+  max-width: 320px;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 0.6em;
+  background: #eee;
+}
+
+.court-card h3 {
+  margin: 0.1em 0 0.3em 0;
+  font-size: 1.14em;
+  color: #002244;
+}
+
+.court-card p {
+  margin: 0.2em 0;
+  font-size: 1.01em;
+}
+
+@media (max-width: 600px) {
+  .court-card {
+    padding: 0.6rem 0.3rem;
+    font-size: 0.98em;
+    max-width: 98vw;
+    min-width: 0;
   }
-  
-  /* Imagen de la pista */
-  .court-card img {
-    width: 100%;
-    height: 160px;
-    object-fit: cover;
+  .court-img {
+    max-width: 100vw;
+    height: 120px;
   }
-  
-  /* Título */
-  .court-card h3 {
-    margin: 0.75rem 1rem 0.5rem;
-    font-size: 1.25rem;
-    color: var(--primary-color);
-  }
-  
-  /* Detalles */
-  .court-card p {
-    margin: 0.25rem 1rem;
-    font-size: 1rem;
-    color: #555;
-    line-height: 1.3;
-  }
-  
-  /* Efecto hover */
-  .court-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-  }
-  
+}

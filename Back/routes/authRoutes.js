@@ -4,11 +4,12 @@ const router = express.Router();
 const { register, login, refreshAccessToken, logout } = require('../controllers/authController');
 const { body, validationResult } = require('express-validator');
 
+// Registro
 router.post('/register',
-  body('username').isLength({ min: 2 }),
-  body('email').isEmail(),
-  body('password').isLength({ min: 6 }),
-  body('role').isIn(['player', 'organizer']),
+  body('username').isLength({ min: 2 }).withMessage('El nombre debe tener al menos 2 caracteres'),
+  body('email').isEmail().withMessage('Email inválido'),
+  body('password').isLength({ min: 6 }).withMessage('La contraseña debe tener al menos 6 caracteres'),
+  body('role').isIn(['player', 'organizer']).withMessage('Rol inválido'),
   (req, res, next) => {
     const errs = validationResult(req);
     if (!errs.isEmpty()) return res.status(400).json({ errors: errs.array() });
@@ -17,9 +18,10 @@ router.post('/register',
   register
 );
 
+// Login
 router.post('/login',
-  body('email').isEmail(),
-  body('password').isLength({ min: 6 }),
+  body('email').isEmail().withMessage('Email inválido'),
+  body('password').isLength({ min: 6 }).withMessage('La contraseña debe tener al menos 6 caracteres'),
   (req, res, next) => {
     const errs = validationResult(req);
     if (!errs.isEmpty()) return res.status(400).json({ errors: errs.array() });
@@ -28,10 +30,8 @@ router.post('/login',
   login
 );
 
-// Refrescar token
 router.post('/token', refreshAccessToken);
-
-// Logout
 router.post('/logout', logout);
 
 module.exports = router;
+

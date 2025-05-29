@@ -16,7 +16,6 @@ import TermsOfService from './Pages/FooterPages/TermsOfService';
 import RegisterMatch from './Pages/RegisterMatch/RegisterMatch';
 import Statistics from './Pages/Statistics/Statistics';
 import GlobalReservations from './Pages/GlobalReservations/GlobalReservations';
-import { ToastContainer } from 'react-toastify';
 import './App.css';
 import './Pages/MainApp/MainApp.css';
 
@@ -25,7 +24,6 @@ function App() {
 
   return (
     <Router>
-      <ToastContainer position="top-right" autoClose={3000} />
       <Header />
 
       <Routes>

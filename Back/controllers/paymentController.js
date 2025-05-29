@@ -35,34 +35,43 @@ exports.createSession = async (req, res, next) => {
     next(err);
   }
 };
-
-
-// Confirmar pago y crear reserva
+// controllers/paymentController.js
 exports.completeSession = async (req, res, next) => {
   try {
     const { sessionId } = req.body;
-    console.log('[STRIPE][COMPLETE] Recibido sessionId:', sessionId);
     const session = await stripe.checkout.sessions.retrieve(sessionId);
-    console.log('[STRIPE][COMPLETE] Sesión Stripe:', session);
 
-
-    // IMPRESCINDIBLE: SOLO crea la reserva si el pago está COMPLETADO
     if (session.payment_status !== 'paid') {
-      console.log('🎟️ [STRIPE SESSION EN /payments/complete]', JSON.stringify(session, null, 2));
       return res.status(402).json({ message: 'El pago no está completado. Estado: ' + session.payment_status });
     }
 
     const { userId, courtId, startTime, endTime } = session.metadata;
 
-    const reservation = await reservationService.createReservation({
-      userId:    parseInt(userId, 10),
-      courtId:   parseInt(courtId, 10),
+    // Nueva protección: busca si ya existe reserva idéntica
+    const existing = await reservationService.findByUserCourtAndTime({
+      userId: parseInt(userId, 10),
+      courtId: parseInt(courtId, 10),
       startTime,
       endTime
     });
+    if (existing) {
+      // Opcional: puedes retornar el objeto o solo un mensaje
+      return res.status(200).json({ message: 'Reserva ya registrada', reservation: existing });
+    }
+
+    // Crear la reserva solo si no existe
+    const reservation = await reservationService.createReservation({
+      userId: parseInt(userId, 10),
+      courtId: parseInt(courtId, 10),
+      startTime,
+      endTime,
+      paymentIntentId: session.payment_intent || null
+    });
     res.status(201).json(reservation);
   } catch (err) {
-    console.error('[STRIPE][COMPLETE] ERROR:', err);
+    if (err.message === 'La franja ya está ocupada') {
+      return res.status(409).json({ message: 'La franja horaria seleccionada ya está ocupada. Por favor, elige otra.' });
+    }
     next(err);
   }
 };

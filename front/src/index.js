@@ -19,6 +19,7 @@ root.render(
         newestOnTop
         closeOnClick
         pauseOnHover
+        theme="light" 
       />
     </AuthProvider>
   </React.StrictMode>

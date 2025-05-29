@@ -1,19 +1,117 @@
-/* App.css o variables.css */
-:root {
-  --bg-color: #f7f4ed;
-  --primary-color: #002244;
-  --accent-color: #ffcc00;
-  --hover-color: #ffdb4d;
+/* src/App.css */
+
+/* Layout principal */
+.main-app-content {
+  min-height: 70vh;
+  max-width: 700px;
+  margin: 2rem auto;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 2px 20px #0001;
+  padding: 2rem;
+  transition: box-shadow 0.2s;
 }
 
-body {
-  background-color: var(--bg-color);
-  color: var(--primary-color);
+@media (max-width: 900px) {
+  .main-app-content {
+    max-width: 96vw;
+    margin: 1rem auto;
+    padding: 1rem;
+  }
 }
 
-button {
-  background-color: var(--accent-color);
+@media (max-width: 600px) {
+  .main-app-content {
+    border-radius: 0;
+    margin: 0;
+    padding: 0.6rem;
+    box-shadow: none;
+    min-height: 80vh;
+  }
+  h2, h3 {
+    font-size: 1.3rem;
+  }
 }
-button:hover {
-  background-color: var(--hover-color);
+
+/* Ajustes generales para formularios, botones y mensajes */
+button, .btn-save, .btn-cancel, .btn-action {
+  font-size: 1rem;
+  padding: 0.7rem 1.3rem;
+  border-radius: 6px;
+  border: none;
+  background: var(--primary-color, #2c5bd7);
+  color: #fff;
+  transition: background 0.2s, color 0.2s;
+  margin: 0.3rem 0.15rem;
+  cursor: pointer;
+}
+button:disabled {
+  background: #bbb;
+  color: #eee;
+  cursor: not-allowed;
+}
+.error {
+  color: #d32f2f;
+  margin-top: 0.25rem;
+}
+.success {
+  color: #388e3c;
+  margin-top: 0.25rem;
+}
+
+input, select, textarea {
+  font-size: 1em;
+  padding: 0.45em 0.6em;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  margin-top: 0.2em;
+  margin-bottom: 0.6em;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Si tienes toasts en las esquinas no necesitas ajustar aquí */
+
+@media (max-width: 400px) {
+  .main-app-content {
+    padding: 0.15rem;
+    font-size: 0.99rem;
+  }
+  button {
+    font-size: 0.98rem;
+    padding: 0.7rem 0.6rem;
+  }
+}
+
+/* Añade estilos para tablas si tienes: */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+th, td {
+  padding: 0.5rem 0.25rem;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+@media (max-width: 600px) {
+  table, thead, tbody, th, td, tr {
+    display: block;
+  }
+  th {
+    position: absolute;
+    left: -9999px;
+  }
+  td {
+    border: none;
+    position: relative;
+    padding-left: 40%;
+    min-height: 2.2em;
+  }
+  td:before {
+    position: absolute;
+    left: 0.5em;
+    top: 0.8em;
+    font-weight: bold;
+    white-space: nowrap;
+  }
 }

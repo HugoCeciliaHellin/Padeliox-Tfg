@@ -2,15 +2,9 @@
 const { Reservation } = require('../models');
 const { Op } = require('sequelize');
 
-/**
- * Devuelve true si existe YA en BD una reserva
- * que solape *estrictamente* [newStart, newEnd),
- * permitiendo que terminen justo en newStart o empiecen en newEnd.
- */
 async function hasOverlap(courtId, newStart, newEnd, excludeId = null) {
   const where = {
     courtId,
-    // conflicto si EXISTING.start < newEnd  AND  EXISTING.end > newStart
     [Op.and]: [
       { startTime: { [Op.lt]: newEnd } },
       { endTime:   { [Op.gt]: newStart } },
@@ -22,80 +16,64 @@ async function hasOverlap(courtId, newStart, newEnd, excludeId = null) {
   const conflict = await Reservation.findOne({ where });
   return !!conflict;
 }
-
-/**
- * Crea una nueva reserva tras comprobar solapamientos.
- * Lanza Error('La franja ya está ocupada') si no es posible.
- */
-async function createReservation({ userId, courtId, startTime, endTime }) {
-    // 0️⃣ rechazamos reservas en el pasado
+async function createReservation({ userId, courtId, startTime, endTime, paymentIntentId }) {
   if (new Date(endTime) < new Date()) {
     const err = new Error('No puedes reservar en el pasado');
     err.status = 400;
     throw err;
   }
-
-  // 1️⃣ comprobamos solapamientos
   if (await hasOverlap(courtId, startTime, endTime)) {
-    throw new Error('La franja ya está ocupada');
+    const err = new Error('La franja ya está ocupada');
+    err.status = 409;
+    throw err;
   }
-
-  // 2️⃣ si todo ok, creamos
-  return Reservation.create({ userId, courtId, startTime, endTime });
+  // Incluye paymentIntentId si se pasa
+  return Reservation.create({ userId, courtId, startTime, endTime, paymentIntentId });
 }
 
-/**
- * Devuelve todas las reservas de un usuario.
- */
+
+
 async function listMyReservations(userId) {
   return Reservation.findAll({ where: { userId } });
 }
 
-/**
- * Actualiza una reserva concreta tras comprobar solapamientos.
- * Lanza Error('La franja solapa con otra reserva') si no es posible.
- */
 async function updateReservation(id, userId, { startTime, endTime }) {
-const r = await Reservation.findOne({ where: { id, userId } });
+  const r = await Reservation.findOne({ where: { id, userId } });
   if (!r) {
     const err = new Error('Reserva no encontrada');
     err.status = 404;
     throw err;
   }
 
-  // 2️⃣ Determina los valores finales de start/end
   const newStart = startTime || r.startTime;
   const newEnd   = endTime   || r.endTime;
 
-  // 3️⃣ Impide que el tramo actualizado quede completamente en el pasado
   if (new Date(newEnd) < new Date()) {
     const err = new Error('No puedes reservar en el pasado');
     err.status = 400;
     throw err;
   }
 
-  // 4️⃣ Comprueba solapamientos, excluyendo esta misma reserva
   if (await hasOverlap(r.courtId, newStart, newEnd, id)) {
-    throw new Error('La franja solapa con otra reserva');
+    const err = new Error('La franja solapa con otra reserva');
+    err.status = 409;
+    throw err;
   }
 
-  // 5️⃣ Si todo OK, aplica la actualización
   await r.update({ startTime: newStart, endTime: newEnd });
   return r;
 }
 
-/**
- * Borra la reserva si existe y pertenece al usuario.
- */
 async function deleteReservation(id, userId) {
   const r = await Reservation.findOne({ where: { id, userId } });
-  if (!r) throw Object.assign(new Error('Reserva no encontrada'), { status: 404 });
+  if (!r) {
+    const err = new Error('Reserva no encontrada');
+    err.status = 404;
+    throw err;
+  }
   await r.destroy();
 }
 
-/**
- * Devuelve las franjas ocupadas de una pista en un día concreto.
- */
 async function getAvailability(courtId, date) {
   const startOfDay = new Date(`${date}T00:00:00`);
   const endOfDay   = new Date(`${date}T23:59:59`);
@@ -112,7 +90,7 @@ async function getAvailability(courtId, date) {
         }
       ]
     },
-    attributes: ['startTime','endTime']
+    attributes: ['startTime', 'endTime']
   });
 
   return ocupadas;
@@ -120,12 +98,11 @@ async function getAvailability(courtId, date) {
 
 async function deletePastReservations(userId) {
   const now = new Date();
-  // destruye todas las reservas cuyo endTime ≤ ahora
   const count = await Reservation.destroy({
     where: {
       userId,
       endTime: { [Op.lte]: now },
-      result: null // solo si no tienen resultado asignado
+      result: null
     }
   });
   return count;
@@ -133,7 +110,11 @@ async function deletePastReservations(userId) {
 
 async function setMatchResult(id, userId, result) {
   const r = await Reservation.findOne({ where: { id, userId } });
-  if (!r) throw Object.assign(new Error('Reserva no encontrada'), { status: 404 });
+  if (!r) {
+    const err = new Error('Reserva no encontrada');
+    err.status = 404;
+    throw err;
+  }
   await r.update({ result });
   return r;
 }
@@ -148,7 +129,6 @@ async function findByUserCourtAndTime({ userId, courtId, startTime, endTime }) {
   });
 }
 
-
 module.exports = {
   hasOverlap,
   createReservation,
@@ -160,5 +140,4 @@ module.exports = {
   setMatchResult,
   findByUserCourtAndTime,
   getByIdAndUser
-
 };

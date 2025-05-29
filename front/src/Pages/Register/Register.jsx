@@ -1,42 +1,45 @@
 // src/Pages/Register/Register.jsx
 import React, { useState } from 'react';
-import { useAuth } from '../../context/AuthContext'; // ① importar useAuth
 import { useNavigate } from 'react-router-dom';
 import './Register.css';
 import apiClient from '../../api/client';
 import { toast } from 'react-toastify';
 
 export default function Register() {
-  const [errors, setErrors] = useState({});
-
-  const navigate   = useNavigate();
   const [formData, setFormData] = useState({
-    username:'', email:'', password:'', role:'player'
+    username: '', email: '', password: '', role: 'player'
   });
-
+  const [errors, setErrors] = useState({});
+  const navigate = useNavigate();
 
   const handleChange = e => {
     setFormData(f => ({ ...f, [e.target.name]: e.target.value }));
+    setErrors(errors => ({ ...errors, [e.target.name]: '' }));
   };
 
-  const handleSubmit = async e => {
-    e.preventDefault();
-    try {
-      const data = await apiClient.post('/auth/register', formData);
-      toast.success(`Usuario registrado con ID: ${data.userId}`);
-      navigate('/login');
-    } catch (err) {
-  if (err.response?.data?.errors) {
-    // Express-validator: [{ msg, param }]
-    const fieldErrors = {};
-    err.response.data.errors.forEach(e => fieldErrors[e.param] = e.msg);
-    setErrors(fieldErrors);
-  } else {
-    setErrors({});
-    toast.error('Error: ' + (err.response?.data?.message || err.message));
+const handleSubmit = async e => {
+  e.preventDefault();
+  setErrors({});
+  try {
+    await apiClient.post('/auth/register', formData);
+    toast.success('Usuario registrado correctamente. Ya puedes iniciar sesión.');
+    navigate('/login');
+  } catch (err) {
+    // Errores de campo SOLO debajo del input
+    if (err.response?.data?.errors) {
+      const fieldErrors = {};
+      err.response.data.errors.forEach(e => fieldErrors[e.param] = e.msg);
+      setErrors(fieldErrors);
+    } else {
+      const msg = err.response?.data?.message || 'No se pudo registrar el usuario';
+      setErrors({ general: msg });
+      toast.error(msg);
+    }
   }
-}
-  };
+};
+
+
+
 
   return (
     <div className="register-form">
@@ -48,11 +51,11 @@ export default function Register() {
             type="text"
             name="username"
             value={formData.username}
-            onChange={handleChange}        // ③ aquí
+            onChange={handleChange}
             required
+            autoComplete="username"
           />
-            {errors.username && <div className="error">{errors.username}</div>}
-
+          {errors.username && <div className="error">{errors.username}</div>}
         </div>
         <div>
           <label>Email:</label>
@@ -60,22 +63,23 @@ export default function Register() {
             type="email"
             name="email"
             value={formData.email}
-            onChange={handleChange}        // ③ aquí
+            onChange={handleChange}
             required
+            autoComplete="email"
           />
-            {errors.email && <div className="error">{errors.email}</div>}
-
+          {errors.email && <div className="error">{errors.email}</div>}
         </div>
         <div>
           <label>Contraseña:</label>
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}        // ③ aquí
-            required
-          />
-            {errors.password && <div className="error">{errors.password}</div>}
+         <input
+  type="password"
+  name="password"
+  value={formData.password}
+  onChange={handleChange}
+  required
+  autoComplete="new-password"
+/>
+{errors.password && <div className="error">{errors.password}</div>}
 
         </div>
         <div>
@@ -83,13 +87,13 @@ export default function Register() {
           <select
             name="role"
             value={formData.role}
-            onChange={handleChange}        // ③ aquí
+            onChange={handleChange}
           >
             <option value="player">Jugador</option>
             <option value="organizer">Organizador</option>
           </select>
         </div>
-
+        {errors.general && <div className="error">{errors.general}</div>}
         <button type="submit">Registrarse</button>
       </form>
     </div>

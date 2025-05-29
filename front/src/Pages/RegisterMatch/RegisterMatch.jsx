@@ -13,23 +13,28 @@ export default function RegisterMatch() {
     });
   }, []);
 
-  const mark = async (id, result) => {
-    try {
-      await updateMatchResult(id, result);
-      setPasadas(ps => ps.map(r => r.id===id?{...r, result}:r));
-    } catch (e) {
-      toast.error('Error: '+(e.response?.data?.message||e.message));
-    }
-  };
-  
-  const deactivate = async id => {
-    try {
-        await deleteMatchResult(id);
-        setPasadas(ps => ps.map(r => r.id === id ? { ...r, result: null } : r));
-    } catch (e) {
-        toast.error('Error: ' + (e.response?.data?.message || e.message));
-    }
+// src/Pages/RegisterMatch/RegisterMatch.jsx
+// ...
+const mark = async (id, result) => {
+  try {
+    await updateMatchResult(id, result);
+    setPasadas(ps => ps.map(r => r.id === id ? { ...r, result } : r));
+    toast.success(`Partida #${id} registrada como ${result === 'win' ? 'Victoria' : 'Derrota'}.`);
+  } catch (e) {
+    toast.error('Error: ' + (e.response?.data?.message || e.message));
+  }
 };
+
+const deactivate = async id => {
+  try {
+    await deleteMatchResult(id);
+    setPasadas(ps => ps.map(r => r.id === id ? { ...r, result: null } : r));
+    toast.info(`Resultado desactivado para partida #${id}.`);
+  } catch (e) {
+    toast.error('Error: ' + (e.response?.data?.message || e.message));
+  }
+};
+
 
   return (
     <div className="main-app register-match">

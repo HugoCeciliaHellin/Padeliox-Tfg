@@ -15,18 +15,16 @@ export default function EditReservation({ reservation, onDone, onCancel }) {
   const [selected, setSelected] = useState(new Set());
   const date = reservation.startTime.slice(0, 10);
 
-  // ① Carga ocupadas y precalcula tus propios slots
- useEffect(() => {
-  getCourtAvailability(reservation.courtId, date)
-    .then(all => {
-      // normaliza las fechas y filtra tu propia reserva
-      const norm = all.map(o=>({
-        start: toLocalISO(new Date(o.start)),
-        end:   toLocalISO(new Date(o.end))
-      }));
-      const blocked = norm.filter(o =>
-        !(o.start === reservation.startTime && o.end === reservation.endTime)
-      );
+  useEffect(() => {
+    getCourtAvailability(reservation.courtId, date)
+      .then(all => {
+        const norm = all.map(o => ({
+          start: toLocalISO(new Date(o.start)),
+          end:   toLocalISO(new Date(o.end))
+        }));
+        const blocked = norm.filter(o =>
+          !(o.start === reservation.startTime && o.end === reservation.endTime)
+        );
         setOccupied(blocked);
 
         // Preselecciona tus slots actuales
@@ -42,7 +40,7 @@ export default function EditReservation({ reservation, onDone, onCancel }) {
       .catch(console.error);
   }, [reservation, date]);
 
-  // ② Genera grid de slots
+  // Genera slots
   const slots = generateSlots({
     date,
     openTime: '08:00',
@@ -50,8 +48,14 @@ export default function EditReservation({ reservation, onDone, onCancel }) {
     intervalMs: ONE_HOUR
   });
 
-  // ③ Toggle: solo 1 slot permitido
+  // Nueva función: deshabilita slots pasados
+  function isPastSlot(slot) {
+    return new Date(slot) < new Date();
+  }
+
+  // Toggle: solo 1 slot permitido y no pasados
   const toggle = slot => {
+    if (isPastSlot(slot)) return; // Bloquea selección en pasado
     if (selected.has(slot)) {
       setSelected(new Set());
     } else {
@@ -59,12 +63,10 @@ export default function EditReservation({ reservation, onDone, onCancel }) {
     }
   };
 
-  // ④ Guardar cambios
   const handleSave = async () => {
     if (selected.size !== 1) {
       return toast.error('Selecciona UNA franja de 1 hora');
     }
-
     const arr = Array.from(selected).sort();
     const start = arr[0];
     const last = arr[arr.length - 1];
@@ -75,7 +77,7 @@ export default function EditReservation({ reservation, onDone, onCancel }) {
       onDone(updated);
     } catch (err) {
       const msg = err.response?.data?.message || err.message;
-      toast.error('Error: ' + msg);
+      toast.error(msg);
     }
   };
 
@@ -87,9 +89,10 @@ export default function EditReservation({ reservation, onDone, onCancel }) {
         occupiedSlots={occupied}
         selectedSlots={selected}
         onToggle={toggle}
+        isPastSlot={isPastSlot} 
       />
       <div className="edit-actions">
-        <button onClick={handleSave} className="btn-save" disabled={selected.size !== 1}> Guardar</button>
+        <button onClick={handleSave} className="btn-save" disabled={selected.size !== 1}>Guardar</button>
         <button onClick={onCancel} className="btn-cancel">Cancelar</button>
       </div>
     </div>

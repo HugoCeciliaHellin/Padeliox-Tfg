@@ -4,29 +4,36 @@ import './SlotGrid.css';
 
 export default function SlotGrid({
   slots,
-  occupiedSlots,     // [{ start, end }, …] en ISO-local sin Z
-  selectedSlots,     // Set de ISO-local strings
-  onToggle,          // fn(slot: ISO-local)
+  occupiedSlots,
+  selectedSlots,
+  onToggle,
 }) {
-  // ② Comprueba ocupación comparando ISO-local con las props.{start,end}
+  const now = new Date();
   const isOccupied = slot =>
-    occupiedSlots.some(o =>
-      slot >= o.start && slot < o.end
-    );
+    occupiedSlots.some(o => slot >= o.start && slot < o.end);
+  const isPast = slot => new Date(slot) < now;
 
   return (
     <div className="slot-grid">
       {slots.map(slot => {
         const occ = isOccupied(slot);
         const sel = selectedSlots.has(slot);
-        const cls = occ ? 'occupied' : sel ? 'selected' : 'free';
+        const past = isPast(slot);
+        const cls = occ
+          ? 'occupied'
+          : past
+          ? 'past'
+          : sel
+          ? 'selected'
+          : 'free';
         return (
           <div
             key={slot}
             className={`slot-cell ${cls}`}
-            onClick={() => !occ && onToggle(slot)}
+            style={past ? { opacity: 0.5, pointerEvents: 'none', background: '#ccc' } : {}}
+            onClick={() => !occ && !past && onToggle(slot)}
           >
-            {slot.slice(11)} {/* muestra "HH:mm" */}
+            {slot.slice(11)}
           </div>
         );
       })}
