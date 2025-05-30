@@ -19,7 +19,7 @@ async function createCheckoutSession({
         product_data: {
           name: `Reserva pista #${courtId}`
         },
-        unit_amount: Math.round(amount * 100) // Stripe trabaja en céntimos
+        unit_amount: Math.round(amount * 100)
       },
       quantity: 1
     }],

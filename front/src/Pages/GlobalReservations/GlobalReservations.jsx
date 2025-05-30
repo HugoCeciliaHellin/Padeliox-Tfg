@@ -2,17 +2,31 @@
 import { useEffect, useState } from 'react';
 import apiClient from '../../api/client';
 import './GlobalReservations.css';
+import axios from 'axios';
 
 export default function GlobalReservations() {
   const [reservas, setReservas] = useState([]);
 
-  const handleExport = async () => {
-  const res = await apiClient.get('/global-reservations/export', { responseType: 'blob' });
-  const url = window.URL.createObjectURL(new Blob([res]));
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'reservas_padelliox.csv';
-  a.click();
+
+const handleExport = async () => {
+  try {
+    const token = localStorage.getItem('token'); // 🛡️ Asegúrate de enviar el token
+    const response = await axios.get('http://localhost:3000/api/global-reservations/export', {
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+      responseType: 'blob'
+    });
+
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'reservas_padelliox.csv';
+    a.click();
+  } catch (err) {
+    console.error('❌ Error exportando CSV:', err);
+    alert('No se pudo exportar el CSV. No hay reservas para exportar');
+  }
 };
 
   useEffect(() => {

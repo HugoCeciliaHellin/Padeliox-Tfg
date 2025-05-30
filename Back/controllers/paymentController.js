@@ -53,9 +53,9 @@ exports.completeSession = async (req, res, next) => {
     });
 
     if (existing) {
-      // ✅ Lanza error controlado para evitar éxito falso en frontend
-      return res.status(409).json({ message: 'Ya tenías una reserva registrada para ese horario.' });
-    }
+  return res.status(200).json({ message: 'Reserva ya registrada', reservation: existing });
+}
+
 
     const reservation = await reservationService.createReservation({
       userId: parseInt(userId, 10),

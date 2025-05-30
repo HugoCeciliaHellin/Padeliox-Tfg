@@ -15,7 +15,11 @@ const Court = sequelize.define('Court', {
   price: { type: DataTypes.FLOAT, allowNull: false, validate: { min: 1 }},
   hasLights: { type: DataTypes.BOOLEAN, defaultValue: false },
   hasLockerRoom: { type: DataTypes.BOOLEAN, defaultValue: false },
-  imageUrl: { type: DataTypes.STRING }
+  imageUrl: {
+  type: DataTypes.STRING,
+  validate: { isUrl: { msg: 'URL de imagen no válida' } }
+}
+
 }, {
   timestamps: false,
   tableName: 'courts'

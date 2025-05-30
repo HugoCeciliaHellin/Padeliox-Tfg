@@ -5,17 +5,31 @@ const { toLocalISO } = require('../utils/date');
 
 exports.createReservation = async (req, res, next) => {
   try {
-    const r = await reservationService.createReservation({
-      userId: req.user.userId,
-      courtId: req.body.courtId,
-      startTime: req.body.startTime,
-      endTime: req.body.endTime
+    const { courtId, startTime, endTime } = req.body;
+    const userId = req.user.userId;
+
+    const existing = await reservationService.findByUserCourtAndTime({
+      userId, courtId, startTime, endTime
     });
-    res.status(201).json(r);
+
+    if (existing) {
+      return res.status(409).json({ message: 'Ya tienes una reserva para ese horario' });
+    }
+
+    const reservation = await reservationService.createReservation({
+      userId, courtId, startTime, endTime
+    });
+
+    res.status(201).json(reservation);
   } catch (err) {
+    if (err.message === 'La franja ya está ocupada') {
+      return res.status(409).json({ message: err.message });
+    }
     next(err);
   }
 };
+
+
 
 exports.listMyReservations = async (req, res, next) => {
   try {

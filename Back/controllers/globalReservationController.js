@@ -19,6 +19,7 @@ exports.listAll = async (req, res, next) => {
     next(err);
   }
 };
+
 exports.exportCSV = async (req, res, next) => {
   try {
     const now = new Date();
@@ -31,7 +32,6 @@ exports.exportCSV = async (req, res, next) => {
       order: [['startTime', 'ASC']]
     });
 
-    // Utilidad segura para formatear fechas
     const parseDate = d =>
       !d ? ''
       : typeof d === 'string'
@@ -40,7 +40,6 @@ exports.exportCSV = async (req, res, next) => {
           ? d.toISOString().replace('T', ' ').slice(0, 16)
           : '';
 
-    // Formatear filas para CSV
     const rows = reservas.map(r => ({
       Usuario:    r.User?.username || '',
       Email:      r.User?.email || '',
@@ -53,15 +52,24 @@ exports.exportCSV = async (req, res, next) => {
       PaymentId:  r.paymentIntentId || ''
     }));
 
+    // ⚠️ CSV vacío con cabecera si no hay reservas
     if (!rows.length) {
-      return res.status(400).json({ message: 'No hay reservas futuras para exportar.' });
+      const parser = new Parser();
+      const csvEmpty = parser.parse([]);
+      res.set({
+        'Content-Type': 'text/csv',
+        'Content-Disposition': 'attachment; filename="reservas_padelliox.csv"'
+      });
+      return res.send(csvEmpty);
     }
 
     const parser = new Parser();
     const csv = parser.parse(rows);
 
-    res.header('Content-Type', 'text/csv');
-    res.attachment('reservas_padelliox.csv');
+    res.set({
+      'Content-Type': 'text/csv',
+      'Content-Disposition': 'attachment; filename="reservas_padelliox.csv"'
+    });
     res.send(csv);
   } catch (err) {
     next(err);

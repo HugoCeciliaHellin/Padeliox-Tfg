@@ -1,4 +1,3 @@
-// front/src/Pages/ReserveCourt/ReserveCourt.jsx
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import SlotGrid from '../../components/SlotGrid/SlotGrid';
@@ -19,6 +18,7 @@ export default function ReserveCourt() {
   const [date, setDate] = useState(new Date().toISOString().slice(0,10));
   const [occupied, setOccupied] = useState([]);
   const [selected, setSelected] = useState(new Set());
+  const [loading, setLoading] = useState(false);
   const today = date;
 
   useEffect(() => {
@@ -37,20 +37,26 @@ export default function ReserveCourt() {
     setSelected(new Set());
   }, [id, date]);
 
-const handleSubmit = async e => {
-  e.preventDefault();
-  if (selected.size !== 1) return toast.error('Selecciona 1 hora');
-  const slot = Array.from(selected)[0];
-  const start = slot;
-  const end = toLocalISO(new Date(new Date(slot).getTime() + ONE_HOUR));
-  try {
-    const sessionId = await createCheckoutSession(id, start, end);
-    const stripe = await stripePromise;
-    await stripe.redirectToCheckout({ sessionId });
-  } catch (err) {
-    toast.error('Error al iniciar el pago: ' + err.message);
-  }
-};
+  const handleSubmit = async e => {
+    e.preventDefault();
+    if (selected.size !== 1) return toast.error('Selecciona 1 hora');
+
+    const slot = Array.from(selected)[0];
+    const start = slot;
+    const end = toLocalISO(new Date(new Date(slot).getTime() + ONE_HOUR));
+
+    setLoading(true);
+
+    try {
+      const sessionId = await createCheckoutSession(id, start, end);
+      const stripe = await stripePromise;
+      await stripe.redirectToCheckout({ sessionId });
+    } catch (err) {
+      toast.error('Error al iniciar el pago: ' + (err.response?.data?.message || err.message));
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const slots = generateSlots({
     date, openTime: '08:00', closeTime: '22:00', intervalMs: ONE_HOUR
@@ -78,8 +84,8 @@ const handleSubmit = async e => {
           }
         }}
       />
-      <button onClick={handleSubmit} disabled={selected.size !== 1}>
-        Confirmar 1 hora
+      <button onClick={handleSubmit} disabled={selected.size !== 1 || loading}>
+        {loading ? 'Procesando...' : 'Confirmar 1 hora'}
       </button>
     </div>
   );

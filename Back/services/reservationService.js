@@ -1,8 +1,8 @@
-// services/reservationService.js
+// service/reservationService.js
 const { Reservation } = require('../models');
 const { Op } = require('sequelize');
 
-async function hasOverlap(courtId, newStart, newEnd, excludeId = null) {
+async function isSlotTaken(courtId, newStart, newEnd, excludeId = null) {
   const where = {
     courtId,
     [Op.and]: [
@@ -16,22 +16,20 @@ async function hasOverlap(courtId, newStart, newEnd, excludeId = null) {
   const conflict = await Reservation.findOne({ where });
   return !!conflict;
 }
+
 async function createReservation({ userId, courtId, startTime, endTime, paymentIntentId }) {
   if (new Date(endTime) < new Date()) {
     const err = new Error('No puedes reservar en el pasado');
     err.status = 400;
     throw err;
   }
-  if (await hasOverlap(courtId, startTime, endTime)) {
+  if (await isSlotTaken(courtId, startTime, endTime)) {
     const err = new Error('La franja ya está ocupada');
     err.status = 409;
     throw err;
   }
-  // Incluye paymentIntentId si se pasa
   return Reservation.create({ userId, courtId, startTime, endTime, paymentIntentId });
 }
-
-
 
 async function listMyReservations(userId) {
   return Reservation.findAll({ where: { userId } });
@@ -54,7 +52,7 @@ async function updateReservation(id, userId, { startTime, endTime }) {
     throw err;
   }
 
-  if (await hasOverlap(r.courtId, newStart, newEnd, id)) {
+  if (await isSlotTaken(r.courtId, newStart, newEnd, id)) {
     const err = new Error('La franja solapa con otra reserva');
     err.status = 409;
     throw err;
@@ -130,7 +128,7 @@ async function findByUserCourtAndTime({ userId, courtId, startTime, endTime }) {
 }
 
 module.exports = {
-  hasOverlap,
+  isSlotTaken,
   createReservation,
   listMyReservations,
   updateReservation,

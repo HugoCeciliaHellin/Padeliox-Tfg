@@ -42,9 +42,9 @@ const login = async (req, res, next) => {
       return res.status(400).json({ message: 'Email y contraseña son requeridos' });
     }
 
-    const user = await User.findOne({ where: { email } });
+    // FIX: anular el defaultScope para incluir password y refreshToken
+    const user = await User.scope(null).findOne({ where: { email } });
 
-    // Protección adicional
     if (!user || !user.password) {
       return res.status(401).json({ message: 'Credenciales inválidas' });
     }
@@ -90,8 +90,11 @@ const refreshAccessToken = async (req, res, next) => {
   if (!refreshToken) return res.sendStatus(401);
 
   let payload;
-  try { payload = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET); }
-  catch { return res.sendStatus(403); }
+  try {
+    payload = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+  } catch {
+    return res.sendStatus(403);
+  }
 
   const user = await User.findByPk(payload.userId);
   if (!user || user.refreshToken !== refreshToken) return res.sendStatus(403);
@@ -108,6 +111,7 @@ const refreshAccessToken = async (req, res, next) => {
 const logout = async (req, res, next) => {
   const { refreshToken } = req.body;
   if (!refreshToken) return res.status(400).json({ message: 'No token provided' });
+
   try {
     const user = await User.findOne({ where: { refreshToken } });
     if (!user) return res.status(200).json({ message: 'Logout OK' });
