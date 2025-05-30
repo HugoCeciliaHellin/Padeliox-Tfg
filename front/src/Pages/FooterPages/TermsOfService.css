@@ -1,25 +1,66 @@
-/* src/Pages/TermsOfService/TermsOfService.css */
-
 .page {
-    max-width: 800px;
-    margin: 2rem auto;
-    padding: 0 1rem;
-    color: #333;
-    line-height: 1.6;
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  color: #333;
+  line-height: 1.6;
+}
+
+.terms h1 {
+  margin-bottom: 1rem;
+  color: var(--primary-color);
+  font-size: 2rem;
+}
+
+.terms section {
+  margin-top: 1.5rem;
+}
+
+.terms h2 {
+  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
+  color: var(--primary-color);
+}
+
+/* TABLET ≤ 900px */
+@media (max-width: 900px) {
+  .page {
+    padding: 0 0.8rem;
   }
-  
+
   .terms h1 {
-    margin-bottom: 1rem;
-    color: var(--primary-color);
+    font-size: 1.8rem;
   }
-  
-  .terms section {
-    margin-top: 1.5rem;
-  }
-  
+
   .terms h2 {
-    margin-bottom: 0.5rem;
-    font-size: 1.2rem;
-    color: var(--primary-color);
+    font-size: 1.1rem;
   }
-  
+}
+
+/* MÓVILES ≤ 600px */
+@media (max-width: 600px) {
+  .page {
+    padding: 0 0.5rem;
+    margin: 1rem auto;
+  }
+
+  .terms h1 {
+    font-size: 1.6rem;
+    text-align: center;
+  }
+
+  .terms h2 {
+    font-size: 1.05rem;
+  }
+}
+
+/* MÓVILES PEQUEÑOS ≤ 480px */
+@media (max-width: 480px) {
+  .terms h1 {
+    font-size: 1.5rem;
+  }
+
+  .terms h2 {
+    font-size: 1rem;
+  }
+}

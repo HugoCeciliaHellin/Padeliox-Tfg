@@ -1,25 +1,25 @@
-/* Wrapper general */
+/* CONTENEDOR PRINCIPAL */
 .main-app {
-  max-width: 1000px;
+  max-width: 1100px;
   margin: 2rem auto;
   padding: 1.5rem;
-  background-color: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
 }
 
-/* Layout de filtros + resultados */
+/* LAYOUT: filtros + resultados */
 .courts-page {
   display: flex;
   gap: 2rem;
 }
 
-/* Panel de filtros */
+/* PANEL FILTROS */
 .filters {
   flex: 0 0 250px;
-  background: #f2f4f8;
-  padding: 1rem;
-  border-radius: 6px;
+  background: #f8f9fa;
+  padding: 1.2rem;
+  border-radius: 8px;
   border: 1px solid #e0e0e0;
   display: flex;
   flex-direction: column;
@@ -28,21 +28,21 @@
 
 .filters h3 {
   margin: 0;
-  font-size: 1.2rem;
+  font-size: 1.15rem;
   color: var(--primary-color);
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid #ccc;
   padding-bottom: 0.5rem;
 }
 
-/* Inputs y selects */
+/* Inputs */
 .filters input,
 .filters select {
   width: 100%;
-  padding: 0.6rem;
+  padding: 0.6rem 0.8rem;
   border: 1px solid #ccc;
-  border-radius: 4px;
+  border-radius: 6px;
   font-size: 0.95rem;
-  transition: border-color 0.2s;
+  transition: border 0.2s;
 }
 
 .filters input:focus,
@@ -51,23 +51,22 @@
   outline: none;
 }
 
-/* Botón restablecer */
+/* BOTÓN RESET */
 .btn-reset {
-  margin-top: 0.5rem;
-  background: var(--accent-color);
+  background-color: var(--accent-color);
   color: var(--primary-color);
-  border: none;
   padding: 0.6rem;
-  border-radius: 4px;
   font-weight: 500;
+  border: none;
+  border-radius: 6px;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background-color 0.2s ease;
 }
 .btn-reset:hover {
-  background: var(--hover-color);
+  background-color: var(--hover-color);
 }
 
-/* Resultados en grid */
+/* GRID DE RESULTADOS */
 .court-results {
   flex: 1;
   display: grid;
@@ -75,21 +74,65 @@
   gap: 1.5rem;
 }
 
-/* Mensaje sin resultados */
+/* TEXTO SIN RESULTADOS */
 .no-results {
   grid-column: 1 / -1;
   text-align: center;
-  color: #666;
+  color: #888;
   font-style: italic;
+  margin-top: 2rem;
 }
 
-/* Responsive: filtros arriba */
-@media (max-width: 768px) {
+/* TABLET ≤ 900px */
+@media (max-width: 900px) {
+  .main-app {
+    padding: 1.2rem;
+  }
+
+  .filters {
+    flex: 0 0 220px;
+  }
+}
+
+/* MÓVILES ≤ 600px */
+@media (max-width: 600px) {
   .courts-page {
     flex-direction: column;
   }
+
   .filters {
-    order: -1;
     width: 100%;
+    order: -1;
+    padding: 1rem;
+  }
+
+  .main-app {
+    padding: 0.8rem;
+  }
+
+  .court-results {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* MÓVILES PEQUEÑOS ≤ 480px */
+@media (max-width: 480px) {
+  .filters input,
+  .filters select {
+    font-size: 0.9rem;
+    padding: 0.5rem 0.6rem;
+  }
+
+  .btn-reset {
+    font-size: 0.9rem;
+    padding: 0.5rem;
+  }
+
+  .main-app {
+    padding: 0.6rem;
+  }
+
+  .filters h3 {
+    font-size: 1rem;
   }
 }

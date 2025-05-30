@@ -1,4 +1,3 @@
-// src/Pages/Register/Register.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Register.css';
@@ -17,38 +16,35 @@ export default function Register() {
     setErrors(errors => ({ ...errors, [e.target.name]: '' }));
   };
 
-const handleSubmit = async e => {
-  e.preventDefault();
-  setErrors({});
-  try {
-    await apiClient.post('/auth/register', formData);
-    toast.success('Usuario registrado correctamente. Ya puedes iniciar sesión.');
-    navigate('/login');
-  } catch (err) {
-  if (err.response?.data?.errors) {
-    const fieldErrors = {};
-    err.response.data.errors.forEach(e => {
-      fieldErrors[e.param] = e.msg;
-      toast.error(`${e.param}: ${e.msg}`);
-    });
-    setErrors(fieldErrors);
-  } else if (err.response?.data?.message) {
-    setErrors({ general: err.response.data.message });
-    toast.error(err.response.data.message);
-  } else {
-    const fallback = 'No se pudo registrar el usuario';
-    setErrors({ general: fallback });
-    toast.error(fallback);
-  }
-}
-};
-
-
-
+  const handleSubmit = async e => {
+    e.preventDefault();
+    setErrors({});
+    try {
+      await apiClient.post('/auth/register', formData);
+      toast.success('Usuario registrado correctamente.');
+      navigate('/login');
+    } catch (err) {
+      if (err.response?.data?.errors) {
+        const fieldErrors = {};
+        err.response.data.errors.forEach(e => {
+          fieldErrors[e.param] = e.msg;
+          toast.error(`${e.param}: ${e.msg}`);
+        });
+        setErrors(fieldErrors);
+      } else if (err.response?.data?.message) {
+        setErrors({ general: err.response.data.message });
+        toast.error(err.response.data.message);
+      } else {
+        const fallback = 'No se pudo registrar el usuario';
+        setErrors({ general: fallback });
+        toast.error(fallback);
+      }
+    }
+  };
 
   return (
     <div className="register-form">
-      <h2>Registro de Usuario</h2>
+      <h2>Crear cuenta</h2>
       <form onSubmit={handleSubmit}>
         <div>
           <label>Nombre de usuario:</label>
@@ -76,24 +72,19 @@ const handleSubmit = async e => {
         </div>
         <div>
           <label>Contraseña:</label>
-         <input
-  type="password"
-  name="password"
-  value={formData.password}
-  onChange={handleChange}
-  required
-  autoComplete="new-password"
-/>
-{errors.password && <div className="error">{errors.password}</div>}
-
+          <input
+            type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            required
+            autoComplete="new-password"
+          />
+          {errors.password && <div className="error">{errors.password}</div>}
         </div>
         <div>
           <label>Rol:</label>
-          <select
-            name="role"
-            value={formData.role}
-            onChange={handleChange}
-          >
+          <select name="role" value={formData.role} onChange={handleChange}>
             <option value="player">Jugador</option>
             <option value="organizer">Organizador</option>
           </select>

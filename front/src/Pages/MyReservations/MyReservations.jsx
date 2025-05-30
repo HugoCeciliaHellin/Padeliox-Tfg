@@ -1,3 +1,4 @@
+// src/Pages/MyReservations/MyReservations.jsx
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ReservationCard from '../../components/ReservationCard/ReservationCard';
@@ -98,42 +99,58 @@ export default function MyReservations() {
   }
 
   const delAllPast = async () => {
-    if (!window.confirm('¿Eliminar todas las reservas ya jugadas?')) return;
-    try {
-      const deletedCount = await deletePastReservations();
+  if (!window.confirm('¿Eliminar todas las reservas ya jugadas?')) return;
+  try {
+    const { deletedCount } = await deletePastReservations();
+
+    if (deletedCount === 0) {
+      toast.info('No había reservas pasadas sin registrar para eliminar.');
+    } else {
       toast.success(`Se han eliminado ${deletedCount} reservas pasadas.`);
       setReservas(rs => rs.filter(r => new Date(r.endTime).getTime() > Date.now()));
-    } catch (err) {
-      toast.error('Error al eliminar reservas pasadas: ' + (err.response?.data?.message || err.message));
     }
-  };
+
+  } catch (err) {
+    toast.error('Error al eliminar reservas pasadas: ' + (err.response?.data?.message || err.message));
+  }
+};
+
 
   return (
-    <div className="main-app">
-      <h2>Próximas Reservas</h2>
-      {próximas.length
-        ? próximas.map(r => (
-            <ReservationCard
-              key={r.id}
-              reservation={r}
-              onEdit={() => setMode({ id: r.id })}
-              onDelete={() => del(r.id)}
-            />
-          ))
-        : <p>No tienes próximas reservas.</p>
-      }
+  <div className="main-app my-reservations">
+    <h2>Próximas Reservas</h2>
+    {próximas.length ? (
+      próximas.map(r => (
+        <ReservationCard
+          key={r.id}
+          reservation={r}
+          onEdit={() => setMode({ id: r.id })}
+          onDelete={() => del(r.id)}
+        />
+      ))
+    ) : (
+      <p className="no-reservations-msg">No tienes próximas reservas.</p>
+    )}
 
-      <h2>Reservas Jugadas</h2>
-      {pasadas.length ? (
-        <>
-          <button className="btn-clear-all" onClick={delAllPast}>
-            Eliminar todas
-          </button>
-          {pasadas.map(r => (
-            <ReservationCard key={r.id} reservation={r} readOnly registered={!!r.result} />
-          ))}
-        </>
-      ) : <p>No tienes reservas pasadas.</p>}
-    </div>
-  );
+    <h2>Reservas Jugadas</h2>
+    {pasadas.length ? (
+      <>
+        <button className="btn-clear-all" onClick={delAllPast}>
+          Eliminar todas
+        </button>
+        {pasadas.map(r => (
+          <ReservationCard
+            key={r.id}
+            reservation={r}
+            readOnly
+            registered={!!r.result}
+          />
+        ))}
+      </>
+    ) : (
+      <p className="no-reservations-msg">No tienes reservas pasadas.</p>
+    )}
+  </div>
+);
+
 }

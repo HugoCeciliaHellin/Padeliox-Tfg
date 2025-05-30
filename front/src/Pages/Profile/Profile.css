@@ -104,3 +104,55 @@
   font-weight: 600;
   color: var(--primary-color);
 }
+
+/* 📱 Tablets */
+@media (max-width: 900px) {
+  .btn-action {
+    font-size: 0.95rem;
+    padding: 0.65rem 1rem;
+  }
+}
+
+/* 📱 Móviles */
+@media (max-width: 600px) {
+  .profile-header h1 {
+    font-size: 1.6rem;
+    text-align: center;
+  }
+
+  .profile-header p {
+    text-align: center;
+    font-size: 1rem;
+  }
+
+  .profile-info {
+    gap: 1rem;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .profile-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .btn-action {
+    width: 100%;
+    font-size: 1rem;
+  }
+
+  .summary-cards {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* 📱 Móviles pequeños */
+@media (max-width: 480px) {
+  .summary-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .card p {
+    font-size: 1.1rem;
+  }
+}

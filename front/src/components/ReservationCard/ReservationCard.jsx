@@ -1,4 +1,3 @@
-// src/components/ReservationCard/ReservationCard.jsx
 import React from 'react';
 import './ReservationCard.css';
 
@@ -10,12 +9,12 @@ export default function ReservationCard({
   registered = false
 }) {
   return (
-    <div className={
-      `reservation-card${registered ? ' reservation-card--registered' : ''}`
-    }>
-      <p><strong>Pista #{reservation.courtId}</strong></p>
-      <p>Desde: {reservation.startTime.replace('T', ' ')}</p>
-      <p>Hasta: {reservation.endTime.replace('T', ' ')}</p>
+    <div className={`reservation-card${registered ? ' reservation-card--registered' : ''}`}>
+      <div className="reservation-info">
+        <h3>Pista #{reservation.courtId}</h3>
+        <p><strong>Desde:</strong> {reservation.startTime.replace('T', ' ')}</p>
+        <p><strong>Hasta:</strong> {reservation.endTime.replace('T', ' ')}</p>
+      </div>
 
       {!readOnly && (
         <div className="reservation-actions">

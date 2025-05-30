@@ -18,7 +18,7 @@ const Header = () => {
       <header className="header">
         <div className="container">
           <Link to="/app/global-reservations" className="logo-container">
-            <img src={Logo} alt="PADELIIOX" className="logo" />
+            <img src={Logo} alt="PADELIOX" className="logo" />
           </Link>
           <nav>
             <ul>
@@ -42,7 +42,7 @@ const Header = () => {
     <header className="header">
       <div className="container">
         <Link to="/" className="logo-container">
-          <img src={Logo} alt="PADELIIOX" className="logo" />
+          <img src={Logo} alt="PADELIOX" className="logo" />
         </Link>
         <nav>
           <ul>
@@ -51,8 +51,8 @@ const Header = () => {
                 <li><Link to="/app/reservar">Reservar</Link></li>
                 <li><Link to="/app/reservas">Reservas</Link></li>
                 <li><Link to="/app/perfil">Perfil</Link></li>
-                <li className="user-info">👤 {user.username}</li>
-                <li className="role-info">🎾 {user.role}</li>
+                <li className="user-info">{user.username}</li>
+                <li className="role-info">{user.role}</li>
                 <li>
                   <button onClick={handleLogout} className="btn-logout">
                     Salir

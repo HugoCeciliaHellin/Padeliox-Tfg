@@ -1,37 +1,108 @@
 .login-form {
-    max-width: 380px;
-    margin: 4rem auto;
-    background-color: #ffffff;
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  max-width: 420px;
+  margin: 4rem auto;
+  padding: 2rem;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.login-form h2 {
+  text-align: center;
+  color: var(--primary-color);
+  margin-bottom: 1.8rem;
+  font-size: 1.6rem;
+}
+
+.form-group {
+  margin-bottom: 1.2rem;
+}
+
+.login-form label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.login-form input {
+  width: 100%;
+  padding: 0.55rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+  transition: border 0.2s ease;
+}
+
+.login-form input:focus {
+  border-color: var(--accent-color);
+  outline: none;
+}
+
+.login-form .error {
+  color: var(--error-color);
+  margin-top: 0.25rem;
+  font-size: 0.9rem;
+}
+
+.login-form button {
+  margin-top: 1.2rem;
+  width: 100%;
+  font-size: 1.05rem;
+  padding: 0.75rem;
+}
+
+/* TABLETS ≤ 900px */
+@media (max-width: 900px) {
+  .login-form {
+    padding: 1.5rem;
   }
-  
+
   .login-form h2 {
-    text-align: center;
-    color: var(--primary-color);
-    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
   }
-  
-  .login-form form > div {
-    margin-bottom: 1rem;
-  }
-  
-  .login-form label {
-    display: block;
-    margin-bottom: 0.4rem;
-    font-weight: 500;
-  }
-  
-  .login-form input {
-    width: 100%;
-    padding: 0.5rem;
-    border: 1px solid var(--primary-color);
-    border-radius: 4px;
-  }
-  
+
   .login-form button {
-    width: 100%;
-    margin-top: 1rem;
+    font-size: 1rem;
   }
-  
+}
+
+/* MÓVILES ≤ 600px */
+@media (max-width: 600px) {
+  .login-form {
+    margin: 2rem auto;
+    padding: 1rem;
+  }
+
+  .login-form h2 {
+    font-size: 1.4rem;
+  }
+
+  .login-form input {
+    font-size: 0.95rem;
+  }
+
+  .login-form button {
+    font-size: 0.95rem;
+  }
+}
+
+/* MÓVILES PEQUEÑOS ≤ 480px */
+@media (max-width: 480px) {
+  .login-form {
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .login-form h2 {
+    font-size: 1.25rem;
+  }
+
+  .login-form input {
+    padding: 0.5rem;
+  }
+
+  .login-form button {
+    padding: 0.65rem;
+  }
+}

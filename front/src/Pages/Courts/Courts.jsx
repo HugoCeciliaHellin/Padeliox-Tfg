@@ -1,10 +1,9 @@
-// src/Pages/Courts/Courts.jsx
 import { useState, useEffect } from 'react';
 import CourtCard from '../../components/CourtCard/CourtCard';
 import { getCourts } from '../../api/courts';
 import './Courts.css';
 
-function Courts() {
+export default function Courts() {
   const [courts, setCourts] = useState([]);
   const [filters, setFilters] = useState({
     search: '',
@@ -12,7 +11,6 @@ function Courts() {
     surface: ''
   });
 
-  // Cada vez que cambian filtros, recarga pistas
   useEffect(() => {
     getCourts(filters).then(setCourts);
   }, [filters]);
@@ -29,12 +27,12 @@ function Courts() {
   return (
     <div className="main-app courts-page">
       <aside className="filters">
-        <h3>Filtros</h3>
+        <h3>Filtrar pistas</h3>
 
         <input
           type="text"
           name="search"
-          placeholder="Ciudad o club…"
+          placeholder="Ciudad o club..."
           value={filters.search}
           onChange={handleFilterChange}
         />
@@ -52,7 +50,7 @@ function Courts() {
           value={filters.surface}
           onChange={handleFilterChange}
         >
-          <option value="">Superficie</option>
+          <option value="">Todas las superficies</option>
           <option value="césped">Césped</option>
           <option value="hormigón">Hormigón</option>
           <option value="moqueta">Moqueta</option>
@@ -67,11 +65,9 @@ function Courts() {
       <section className="court-results">
         {courts.length
           ? courts.map(c => <CourtCard key={c.id} court={c} />)
-          : <p className="no-results">No se encontraron pistas.</p>
+          : <p className="no-results">No se encontraron pistas disponibles.</p>
         }
       </section>
     </div>
   );
 }
-
-export default Courts;

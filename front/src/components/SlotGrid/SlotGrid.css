@@ -1,22 +1,29 @@
-/* src/components/SlotGrid/SlotGrid.css */
-
 .slot-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
-  gap: 4px;
+  gap: 0.4rem;
   margin: 1rem 0;
+  justify-items: center;
 }
 
 .slot-cell {
-  width: 60px;
-  height: 40px;
-  margin: 0.25rem;
+  width: 100%;
+  max-width: 80px;
+  height: 42px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 4px;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 500;
   user-select: none;
-  transition: all 0.2s;
+  transition: background-color 0.2s, transform 0.2s;
+  cursor: pointer;
+  outline: none;
+}
+
+.slot-cell:hover {
+  transform: scale(1.03);
 }
 
 .slot-cell.free {
@@ -25,12 +32,48 @@
 }
 
 .slot-cell.selected {
-  background: #4dd0e1;
-  color: white;
+  background: #00acc1;
+  color: #fff;
+  font-weight: bold;
+  box-shadow: 0 0 0 2px #004d56 inset;
 }
 
 .slot-cell.occupied {
-  background: #ffccbc;
-  color: #bf360c;
+  background: #ffe0e0;
+  color: #b71c1c;
   cursor: not-allowed;
+}
+
+.slot-cell.past {
+  background: #ddd;
+  color: #999;
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+/* Tablet */
+@media (max-width: 900px) {
+  .slot-cell {
+    height: 40px;
+    font-size: 0.9rem;
+    max-width: 70px;
+  }
+}
+
+/* Móviles */
+@media (max-width: 600px) {
+  .slot-cell {
+    height: 38px;
+    font-size: 0.88rem;
+    max-width: 60px;
+  }
+}
+
+/* Móviles pequeños */
+@media (max-width: 480px) {
+  .slot-cell {
+    height: 36px;
+    font-size: 0.85rem;
+    max-width: 55px;
+  }
 }

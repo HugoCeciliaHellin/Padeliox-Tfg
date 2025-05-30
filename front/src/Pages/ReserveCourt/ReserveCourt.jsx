@@ -1,3 +1,4 @@
+// src/Pages/ReserveCourt/ReserveCourt.jsx
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import SlotGrid from '../../components/SlotGrid/SlotGrid';
@@ -64,29 +65,35 @@ export default function ReserveCourt() {
 
   return (
     <div className="main-app reserve-court">
-      <h2>Reservar pista #{id} – {court?.clubName}</h2>
-      <label>
-        Fecha:
-        <input
-          type="date"
-          value={date}
-          onChange={e => setDate(e.target.value)}
-          min={today}
-        />
-      </label>
-      <SlotGrid
-        slots={slots}
-        occupiedSlots={occupied}
-        selectedSlots={selected}
-        onToggle={slot => {
-          if (!occupied.some(o => slot >= o.start && slot < o.end)) {
-            setSelected(new Set([slot]));
-          }
-        }}
-      />
-      <button onClick={handleSubmit} disabled={selected.size !== 1 || loading}>
-        {loading ? 'Procesando...' : 'Confirmar 1 hora'}
-      </button>
-    </div>
+  <h2>Reservar pista #{id}</h2>
+  {court && <p className="court-name">Club: <strong>{court.clubName}</strong></p>}
+
+  <div className="date-selector">
+    <label htmlFor="date">Fecha:</label>
+    <input
+      type="date"
+      id="date"
+      value={date}
+      onChange={e => setDate(e.target.value)}
+      min={today}
+    />
+  </div>
+
+  <SlotGrid
+    slots={slots}
+    occupiedSlots={occupied}
+    selectedSlots={selected}
+    onToggle={slot => {
+      if (!occupied.some(o => slot >= o.start && slot < o.end)) {
+        setSelected(new Set([slot]));
+      }
+    }}
+  />
+
+  <button onClick={handleSubmit} disabled={selected.size !== 1 || loading}>
+    {loading ? 'Procesando...' : 'Confirmar 1 hora'}
+  </button>
+</div>
+
   );
 }

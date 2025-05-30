@@ -59,35 +59,41 @@ export default function Login() {
 
   return (
     <div className="login-form">
-      <h2>Iniciar Sesión</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Email:</label>
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-            autoComplete="email"
-          />
-          {errors.email && <div className="error">{errors.email}</div>}
-        </div>
-        <div>
-          <label>Contraseña:</label>
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-            autoComplete="current-password"
-          />
-          {errors.password && <div className="error">{errors.password}</div>}
-        </div>
-        {errors.general && <div className="error">{errors.general}</div>}
-        <button type="submit">Ingresar</button>
-      </form>
+  <h2>Iniciar sesión</h2>
+  <form onSubmit={handleSubmit} noValidate>
+    <div className="form-group">
+      <label htmlFor="email">Correo electrónico</label>
+      <input
+        id="email"
+        type="email"
+        name="email"
+        value={formData.email}
+        onChange={handleChange}
+        required
+        autoComplete="email"
+      />
+      {errors.email && <div className="error">{errors.email}</div>}
     </div>
+
+    <div className="form-group">
+      <label htmlFor="password">Contraseña</label>
+      <input
+        id="password"
+        type="password"
+        name="password"
+        value={formData.password}
+        onChange={handleChange}
+        required
+        autoComplete="current-password"
+      />
+      {errors.password && <div className="error">{errors.password}</div>}
+    </div>
+
+    {errors.general && <div className="error">{errors.general}</div>}
+
+    <button type="submit">Ingresar</button>
+  </form>
+</div>
+
   );
 }

@@ -5,13 +5,15 @@
   min-height: calc(100vh - 160px);
   padding: 2rem;
   text-align: center;
-  color: var(--primary-color);
   background: var(--bg-color);
   background-image: radial-gradient(circle at center, #ffffff, #f7f4ed);
+  color: var(--primary-color);
 }
 
 .homepage-container {
-  max-width: 650px;
+  max-width: 700px;
+  padding: 1rem;
+  margin: auto;
 }
 
 .homepage-logo {
@@ -19,12 +21,17 @@
   border-radius: 50%;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
   margin-bottom: 1.5rem;
+  transition: transform 0.3s ease;
+}
+
+.homepage-logo:hover {
+  transform: scale(1.05);
 }
 
 .homepage h1 {
-  font-size: 3rem;
+  font-size: 2.5rem;
   font-weight: bold;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.8rem;
   color: var(--primary-color);
 }
 
@@ -35,4 +42,53 @@
 .homepage p {
   font-size: 1.2rem;
   line-height: 1.6;
+  margin-top: 0.5rem;
+  color: #333;
+}
+
+/* TABLETS ≤ 900px */
+@media (max-width: 900px) {
+  .homepage h1 {
+    font-size: 2.2rem;
+  }
+
+  .homepage p {
+    font-size: 1.1rem;
+  }
+
+  .homepage-logo {
+    width: 140px;
+  }
+}
+
+/* MÓVILES ≤ 600px */
+@media (max-width: 600px) {
+  .homepage h1 {
+    font-size: 2rem;
+  }
+
+  .homepage p {
+    font-size: 1.05rem;
+    padding: 0 0.3rem;
+  }
+
+  .homepage-logo {
+    width: 120px;
+    margin-bottom: 1rem;
+  }
+}
+
+/* MÓVILES PEQUEÑOS ≤ 480px */
+@media (max-width: 480px) {
+  .homepage h1 {
+    font-size: 1.75rem;
+  }
+
+  .homepage p {
+    font-size: 1rem;
+  }
+
+  .homepage-logo {
+    width: 100px;
+  }
 }

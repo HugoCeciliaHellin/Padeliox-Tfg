@@ -1,38 +1,105 @@
 .register-form {
-    max-width: 400px;
-    margin: 3rem auto;
-    background-color: #ffffff;
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  max-width: 400px;
+  margin: 3rem auto;
+  background-color: #ffffff;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.register-form h2 {
+  text-align: center;
+  color: var(--primary-color);
+  margin-bottom: 1.5rem;
+}
+
+.register-form form > div {
+  margin-bottom: 1rem;
+}
+
+.register-form label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.register-form input,
+.register-form select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--primary-color);
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.register-form .error {
+  color: var(--error-color);
+  font-size: 0.9rem;
+  margin-top: 0.2rem;
+}
+
+.register-form button {
+  width: 100%;
+  background-color: var(--accent-color);
+  color: var(--primary-color);
+  border: none;
+  padding: 0.75rem;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 1rem;
+  margin-top: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.register-form button:hover {
+  background-color: var(--hover-color);
+}
+
+/* 📱 Tablets */
+@media (max-width: 900px) {
+  .register-form {
+    padding: 1.5rem;
   }
-  
+
   .register-form h2 {
-    text-align: center;
-    color: var(--primary-color);
-    margin-bottom: 1.5rem;
+    font-size: 1.4rem;
   }
-  
-  .register-form form > div {
-    margin-bottom: 1rem;
+}
+
+/* 📱 Móviles */
+@media (max-width: 600px) {
+  .register-form {
+    margin: 2rem 1rem;
+    padding: 1rem;
+    max-width: 100%;
+    border-radius: 6px;
   }
-  
-  .register-form label {
-    display: block;
-    margin-bottom: 0.4rem;
-    font-weight: 500;
+
+  .register-form h2 {
+    font-size: 1.25rem;
   }
-  
+
   .register-form input,
   .register-form select {
-    width: 100%;
-    padding: 0.5rem;
-    border: 1px solid var(--primary-color);
-    border-radius: 4px;
+    font-size: 0.98rem;
+    padding: 0.45rem;
   }
-  
+
   .register-form button {
-    width: 100%;
-    margin-top: 1rem;
+    font-size: 1rem;
+    padding: 0.65rem;
   }
-  
+}
+
+/* 📱 Móviles pequeños */
+@media (max-width: 480px) {
+  .register-form h2 {
+    font-size: 1.2rem;
+  }
+
+  .register-form button {
+    font-size: 0.95rem;
+  }
+}

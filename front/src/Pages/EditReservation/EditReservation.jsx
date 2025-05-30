@@ -1,4 +1,3 @@
-// src/Pages/EditReservation/EditReservation.jsx
 import { useState, useEffect } from 'react';
 import SlotGrid from '../../components/SlotGrid/SlotGrid';
 import { generateSlots } from '../../utils/slots';
@@ -27,7 +26,6 @@ export default function EditReservation({ reservation, onDone, onCancel }) {
         );
         setOccupied(blocked);
 
-        // Preselecciona tus slots actuales
         const own = [];
         let cur = new Date(reservation.startTime).getTime();
         const endMs = new Date(reservation.endTime).getTime();
@@ -40,7 +38,6 @@ export default function EditReservation({ reservation, onDone, onCancel }) {
       .catch(console.error);
   }, [reservation, date]);
 
-  // Genera slots
   const slots = generateSlots({
     date,
     openTime: '08:00',
@@ -48,29 +45,20 @@ export default function EditReservation({ reservation, onDone, onCancel }) {
     intervalMs: ONE_HOUR
   });
 
-  // Nueva función: deshabilita slots pasados
-  function isPastSlot(slot) {
-    return new Date(slot) < new Date();
-  }
+  const isPastSlot = slot => new Date(slot) < new Date();
 
-  // Toggle: solo 1 slot permitido y no pasados
   const toggle = slot => {
-    if (isPastSlot(slot)) return; // Bloquea selección en pasado
-    if (selected.has(slot)) {
-      setSelected(new Set());
-    } else {
-      setSelected(new Set([slot]));
-    }
+    if (isPastSlot(slot)) return;
+    setSelected(prev => new Set(prev.has(slot) ? [] : [slot]));
   };
 
   const handleSave = async () => {
     if (selected.size !== 1) {
       return toast.error('Selecciona UNA franja de 1 hora');
     }
-    const arr = Array.from(selected).sort();
-    const start = arr[0];
-    const last = arr[arr.length - 1];
-    const end = toLocalISO(new Date(new Date(last).getTime() + ONE_HOUR));
+
+    const [start] = Array.from(selected);
+    const end = toLocalISO(new Date(new Date(start).getTime() + ONE_HOUR));
 
     try {
       const updated = await updateReservation(reservation.id, start, end);
@@ -82,18 +70,22 @@ export default function EditReservation({ reservation, onDone, onCancel }) {
   };
 
   return (
-    <div className="main-app">
+    <div className="main-app edit-reservation">
       <h2>Editar Reserva #{reservation.id}</h2>
       <SlotGrid
         slots={slots}
         occupiedSlots={occupied}
         selectedSlots={selected}
         onToggle={toggle}
-        isPastSlot={isPastSlot} 
+        isPastSlot={isPastSlot}
       />
       <div className="edit-actions">
-        <button onClick={handleSave} className="btn-save" disabled={selected.size !== 1}>Guardar</button>
-        <button onClick={onCancel} className="btn-cancel">Cancelar</button>
+        <button onClick={handleSave} className="btn-save" disabled={selected.size !== 1}>
+          Guardar
+        </button>
+        <button onClick={onCancel} className="btn-cancel">
+          Cancelar
+        </button>
       </div>
     </div>
   );

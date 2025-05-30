@@ -1,3 +1,4 @@
+
 // src/components/SlotGrid/SlotGrid.jsx
 import React from 'react';
 import './SlotGrid.css';
@@ -9,6 +10,7 @@ export default function SlotGrid({
   onToggle,
 }) {
   const now = new Date();
+
   const isOccupied = slot =>
     occupiedSlots.some(o => slot >= o.start && slot < o.end);
   const isPast = slot => new Date(slot) < now;
@@ -16,22 +18,20 @@ export default function SlotGrid({
   return (
     <div className="slot-grid">
       {slots.map(slot => {
-        const occ = isOccupied(slot);
-        const sel = selectedSlots.has(slot);
+        const occupied = isOccupied(slot);
+        const selected = selectedSlots.has(slot);
         const past = isPast(slot);
-        const cls = occ
-          ? 'occupied'
-          : past
-          ? 'past'
-          : sel
-          ? 'selected'
-          : 'free';
+        const className = [
+          'slot-cell',
+          past ? 'past' : occupied ? 'occupied' : selected ? 'selected' : 'free'
+        ].join(' ');
+
         return (
           <div
             key={slot}
-            className={`slot-cell ${cls}`}
-            style={past ? { opacity: 0.5, pointerEvents: 'none', background: '#ccc' } : {}}
-            onClick={() => !occ && !past && onToggle(slot)}
+            className={className}
+            tabIndex={!past && !occupied ? 0 : -1}
+            onClick={() => !past && !occupied && onToggle(slot)}
           >
             {slot.slice(11)}
           </div>

@@ -1,13 +1,90 @@
-/* src/Pages/EditReservation/EditReservation.css */
+.edit-reservation {
+  padding: 1.5rem;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
 .edit-actions {
-  margin-top: 1rem;
+  margin-top: 1.5rem;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
-.btn-save, .btn-cancel {
-  margin-right: 0.5rem;
-  padding: 0.5rem 1rem;
+
+.btn-save,
+.btn-cancel {
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s ease, transform 0.2s ease;
 }
-.btn-save { background: #007bff; color: #fff; }
-.btn-cancel { background: #6c757d; color: #fff; }
+
+.btn-save {
+  background-color: #007bff;
+  color: #fff;
+}
+.btn-save:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+}
+
+.btn-cancel {
+  background-color: #6c757d;
+  color: #fff;
+}
+.btn-cancel:hover {
+  background-color: #5a6268;
+  transform: translateY(-2px);
+}
+
+/* TABLET ≤ 900px */
+@media (max-width: 900px) {
+  .edit-reservation {
+    padding: 1.2rem;
+    max-width: 90vw;
+  }
+
+  .edit-actions {
+    gap: 0.75rem;
+  }
+
+  .btn-save,
+  .btn-cancel {
+    font-size: 0.96rem;
+    padding: 0.55rem 1rem;
+  }
+}
+
+/* MÓVILES ≤ 600px */
+@media (max-width: 600px) {
+  .edit-reservation {
+    padding: 1rem;
+  }
+
+  .edit-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .btn-save,
+  .btn-cancel {
+    width: 100%;
+    font-size: 1rem;
+  }
+}
+
+/* MÓVILES PEQUEÑOS ≤ 480px */
+@media (max-width: 480px) {
+  .edit-reservation {
+    padding: 0.8rem;
+  }
+
+  .btn-save,
+  .btn-cancel {
+    font-size: 0.95rem;
+    padding: 0.5rem 0.9rem;
+  }
+}

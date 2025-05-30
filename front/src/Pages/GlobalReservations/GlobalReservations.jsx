@@ -1,4 +1,3 @@
-// src/Pages/GlobalReservations/GlobalReservations.jsx
 import { useEffect, useState } from 'react';
 import apiClient from '../../api/client';
 import './GlobalReservations.css';
@@ -7,27 +6,24 @@ import axios from 'axios';
 export default function GlobalReservations() {
   const [reservas, setReservas] = useState([]);
 
+  const handleExport = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get('http://localhost:3000/api/global-reservations/export', {
+        headers: { Authorization: `Bearer ${token}` },
+        responseType: 'blob'
+      });
 
-const handleExport = async () => {
-  try {
-    const token = localStorage.getItem('token'); // 🛡️ Asegúrate de enviar el token
-    const response = await axios.get('http://localhost:3000/api/global-reservations/export', {
-      headers: {
-        Authorization: `Bearer ${token}`
-      },
-      responseType: 'blob'
-    });
-
-    const url = window.URL.createObjectURL(new Blob([response.data]));
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'reservas_padelliox.csv';
-    a.click();
-  } catch (err) {
-    console.error('❌ Error exportando CSV:', err);
-    alert('No se pudo exportar el CSV. No hay reservas para exportar');
-  }
-};
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'reservas_padelliox.csv';
+      a.click();
+    } catch (err) {
+      console.error('❌ Error exportando CSV:', err);
+      alert('No se pudo exportar el CSV. No hay reservas para exportar.');
+    }
+  };
 
   useEffect(() => {
     apiClient.get('/global-reservations')
@@ -40,9 +36,13 @@ const handleExport = async () => {
   return (
     <div className="main-app">
       <h2>Reservas próximas (todas las pistas, todos los usuarios)</h2>
-        <button onClick={handleExport}>Exportar CSV</button>
+      
+      <div className="export-container">
+        <button onClick={handleExport} className="btn-export">Exportar CSV</button>
+      </div>
+
       <div className="table-container">
-        <table className="global-res-table">
+        <table className="global-res-table" aria-label="Tabla de reservas globales">
           <thead>
             <tr>
               <th>#</th>
@@ -55,9 +55,7 @@ const handleExport = async () => {
           <tbody>
             {reservas.length === 0 ? (
               <tr>
-                <td colSpan={5} className="no-data">
-                  No hay reservas próximas.
-                </td>
+                <td colSpan={5} className="no-data">No hay reservas próximas.</td>
               </tr>
             ) : reservas.map((r, idx) => (
               <tr key={r.id}>

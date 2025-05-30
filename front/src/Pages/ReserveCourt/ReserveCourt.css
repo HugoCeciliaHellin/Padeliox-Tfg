@@ -1,50 +1,117 @@
-/* src/Pages/ReserveCourt/ReserveCourt.css */
-/*… */
-
-/* 1. Asegurar contenedor como nuevo contexto */
 .reserve-court {
   position: relative;
   max-width: 600px;
   margin: 2rem auto;
+  padding: 1.5rem;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
 
-/* 2. Grid en z-index bajo */
-.reserve-court .slot-grid {
-  position: relative;
-  z-index: 0;
+/* Título y subtítulo */
+.reserve-court h2 {
+  color: var(--primary-color);
+  margin-bottom: 0.3rem;
+}
+.court-name {
+  margin-bottom: 1.2rem;
+  color: #444;
+  font-size: 1.05rem;
 }
 
+/* Selector de fecha */
+.date-selector {
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.date-selector label {
+  font-weight: 600;
+  color: var(--primary-color);
+}
+.date-selector input {
+  padding: 0.5rem;
+  border: 1px solid var(--primary-color);
+  border-radius: 6px;
+  font-size: 1rem;
+  background: #f9f9f9;
+}
+
+/* Botón */
 .reserve-court button {
-  /* sigue guardando el fondo principal */
-  background: var(--primary-color);
-  position: relative;
-  z-index: 10;
-  margin-top: 1rem;
-  padding: 0.6rem 1.2rem;
+  margin-top: 1.4rem;
+  padding: 0.7rem 1.4rem;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
+  background: var(--primary-color);
   color: white;
   cursor: pointer;
-  transition: filter 0.2s;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: background-color 0.2s, transform 0.1s ease;
 }
 
-/* Mantener estilos existentes */
-.reserve-court button {
-  margin-top: 1rem;
-  padding: 0.6rem 1.2rem;
-  border: none;
-  border-radius: 4px;
-  background: var(--primary-color);
-  color: white;
-  cursor: pointer;
-  transition: background-color 0.2s;
+.reserve-court button:hover:not(:disabled) {
+  background-color: var(--hover-color);
+  transform: translateY(-1px);
 }
 
 .reserve-court button:disabled {
-  background: #ccc;
+  background: #bbb;
+  color: #eee;
   cursor: not-allowed;
 }
-/* Hover sin variable faltante */
-.reserve-court button:not(:disabled):hover {
-  filter: brightness(0.9);
+
+/* 📱 Tablets */
+@media (max-width: 900px) {
+  .reserve-court {
+    padding: 1.25rem;
+    margin: 1.5rem auto;
+  }
+}
+
+/* 📱 Móviles */
+@media (max-width: 600px) {
+  .reserve-court {
+    padding: 1rem;
+    margin: 1rem;
+    border-radius: 8px;
+  }
+
+  .reserve-court h2 {
+    font-size: 1.4rem;
+    text-align: center;
+  }
+
+  .court-name {
+    font-size: 1rem;
+    text-align: center;
+  }
+
+  .reserve-court button {
+    width: 100%;
+    padding: 0.8rem;
+    font-size: 1rem;
+  }
+}
+
+/* 📱 Móviles pequeños */
+@media (max-width: 480px) {
+  .reserve-court {
+    padding: 0.75rem;
+  }
+
+  .reserve-court h2 {
+    font-size: 1.2rem;
+  }
+
+  .date-selector input {
+    font-size: 0.95rem;
+  }
+
+  .reserve-court button {
+    font-size: 0.95rem;
+    padding: 0.7rem;
+  }
 }
