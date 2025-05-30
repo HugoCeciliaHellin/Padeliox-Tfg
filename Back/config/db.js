@@ -11,7 +11,7 @@ const sequelize = new Sequelize(
   process.env.DB_PASSWORD,   // contraseña
   {
     host: process.env.DB_HOST,
-    port: DB_PORT,
+    port: parseInt(DB_PORT, 10),
     dialect: 'mysql',
     logging: false,            // desactiva logs SQL en producción
     timezone: '+02:00',           // <<< <- almacena/lee en UTC+2

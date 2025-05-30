@@ -11,4 +11,3 @@ export function createCheckoutSession(courtId, startTime, endTime) {
     });
 }
 
-

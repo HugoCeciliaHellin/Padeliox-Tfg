@@ -25,17 +25,22 @@ const handleSubmit = async e => {
     toast.success('Usuario registrado correctamente. Ya puedes iniciar sesión.');
     navigate('/login');
   } catch (err) {
-    // Errores de campo SOLO debajo del input
-    if (err.response?.data?.errors) {
-      const fieldErrors = {};
-      err.response.data.errors.forEach(e => fieldErrors[e.param] = e.msg);
-      setErrors(fieldErrors);
-    } else {
-      const msg = err.response?.data?.message || 'No se pudo registrar el usuario';
-      setErrors({ general: msg });
-      toast.error(msg);
-    }
+  if (err.response?.data?.errors) {
+    const fieldErrors = {};
+    err.response.data.errors.forEach(e => {
+      fieldErrors[e.param] = e.msg;
+      toast.error(`${e.param}: ${e.msg}`);
+    });
+    setErrors(fieldErrors);
+  } else if (err.response?.data?.message) {
+    setErrors({ general: err.response.data.message });
+    toast.error(err.response.data.message);
+  } else {
+    const fallback = 'No se pudo registrar el usuario';
+    setErrors({ general: fallback });
+    toast.error(fallback);
   }
+}
 };
 
 

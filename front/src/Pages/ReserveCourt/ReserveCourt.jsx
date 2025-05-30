@@ -1,4 +1,4 @@
-// src/Pages/ReserveCourt/ReserveCourt.jsx
+// front/src/Pages/ReserveCourt/ReserveCourt.jsx
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import SlotGrid from '../../components/SlotGrid/SlotGrid';
@@ -19,7 +19,7 @@ export default function ReserveCourt() {
   const [date, setDate] = useState(new Date().toISOString().slice(0,10));
   const [occupied, setOccupied] = useState([]);
   const [selected, setSelected] = useState(new Set());
-  const today = new Date().toISOString().slice(0,10);
+  const today = date;
 
   useEffect(() => {
     getCourtById(id).then(setCourt).catch(console.error);
@@ -37,16 +37,10 @@ export default function ReserveCourt() {
     setSelected(new Set());
   }, [id, date]);
 
-  // Nueva función para slots pasados
-  function isPastSlot(slot) {
-    return new Date(slot) < new Date();
-  }
-
 const handleSubmit = async e => {
   e.preventDefault();
   if (selected.size !== 1) return toast.error('Selecciona 1 hora');
   const slot = Array.from(selected)[0];
-  if (isPastSlot(slot)) return toast.error('No puedes reservar en el pasado');
   const start = slot;
   const end = toLocalISO(new Date(new Date(slot).getTime() + ONE_HOUR));
   try {
@@ -57,7 +51,6 @@ const handleSubmit = async e => {
     toast.error('Error al iniciar el pago: ' + err.message);
   }
 };
-
 
   const slots = generateSlots({
     date, openTime: '08:00', closeTime: '22:00', intervalMs: ONE_HOUR
@@ -80,12 +73,10 @@ const handleSubmit = async e => {
         occupiedSlots={occupied}
         selectedSlots={selected}
         onToggle={slot => {
-          if (isPastSlot(slot)) return; // Bloquea selección en pasado
           if (!occupied.some(o => slot >= o.start && slot < o.end)) {
             setSelected(new Set([slot]));
           }
         }}
-        isPastSlot={isPastSlot}
       />
       <button onClick={handleSubmit} disabled={selected.size !== 1}>
         Confirmar 1 hora

@@ -32,7 +32,10 @@ const User = sequelize.define('User', {
         args: [6, 100],
         msg: 'La contraseña debe tener entre 6 y 100 caracteres'
       }
-    }
+    },
+    notEmpty: { msg: 'La contraseña no puede estar vacía' }
+
+
   },
   role: {
     type: DataTypes.ENUM('organizer', 'player'),
@@ -52,7 +55,10 @@ const User = sequelize.define('User', {
 }, {
   timestamps: true,
   underscored: true,    // created_at, updated_at en DB (snake_case)
-  tableName: 'users'
+  tableName: 'users',
+  defaultScope: {
+    attributes: { exclude: ['password', 'refreshToken'] }
+  }
 });
 
 module.exports = User;

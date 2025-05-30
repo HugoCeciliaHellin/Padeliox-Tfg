@@ -2,7 +2,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
-const { validationResult } = require('express-validator');
 
 // Registro de usuario
 const register = async (req, res, next) => {
@@ -39,8 +38,14 @@ const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Email y contraseña son requeridos' });
+    }
+
     const user = await User.findOne({ where: { email } });
-    if (!user) {
+
+    // Protección adicional
+    if (!user || !user.password) {
       return res.status(401).json({ message: 'Credenciales inválidas' });
     }
 

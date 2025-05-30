@@ -1,3 +1,4 @@
+// src/api/globalReservations.js
 import { apiClient } from './client';
 
 export function listAllReservations() {

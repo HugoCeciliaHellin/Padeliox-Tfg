@@ -1,4 +1,4 @@
-// src/Pages/MyReservations/MyReservations.jsx
+
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ReservationCard from '../../components/ReservationCard/ReservationCard';
@@ -14,21 +14,27 @@ import { toast } from 'react-toastify';
 export default function MyReservations() {
   const [reservas, setReservas] = useState([]);
   const [mode, setMode] = useState(null);
-const [, setLoading] = useState(false);
+  const [, setLoading] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
- useEffect(() => {
+  useEffect(() => {
     const qs = Object.fromEntries(new URLSearchParams(location.search));
-    if (qs.session_id) {
+    const sessionId = qs.session_id;
+    const alreadyHandled = sessionStorage.getItem(`reservationHandled-${sessionId}`);
+
+    if (sessionId && !alreadyHandled) {
       setLoading(true);
       apiClient
-  .post('/payments/complete', { sessionId: qs.session_id })
-  .then(() => toast.success('¡Reserva guardada! ✅'))
-  .catch(err => {
-    const msg = err.response?.data?.message || err.message;
-    toast.error(msg);
-  })
+        .post('/payments/complete', { sessionId })
+        .then(() => {
+          toast.success('¡Reserva guardada con éxito! ✅');
+          sessionStorage.setItem(`reservationHandled-${sessionId}`, 'true');
+        })
+        .catch(err => {
+          const msg = err.response?.data?.message || err.message;
+          toast.error('Error al guardar la reserva: ' + msg);
+        })
         .finally(() => {
           setLoading(false);
           navigate('/app/reservas', { replace: true });
@@ -36,53 +42,54 @@ const [, setLoading] = useState(false);
         });
     } else {
       listMyReservations().then(setReservas);
+      // Limpieza: elimina claves antiguas si no hay session_id
+      if (!sessionId) {
+        Object.keys(sessionStorage).forEach(k => {
+          if (k.startsWith('reservationHandled-')) sessionStorage.removeItem(k);
+        });
+      }
     }
   }, [location.search, navigate]);
 
   const now = Date.now();
   const próximas = reservas.filter(r => new Date(r.endTime).getTime() > now);
-  const pasadas  = reservas.filter(r => new Date(r.endTime).getTime() <= now);
+  const pasadas = reservas.filter(r => new Date(r.endTime).getTime() <= now);
 
   const del = async id => {
-  if (!window.confirm('¿Eliminar reserva?')) return;
-  try {
-    // Recoge la respuesta (puede ser undefined si no cambiaste el backend aún)
-    const resp = await deleteReservation(id);
-    setReservas(rs => rs.filter(r => r.id !== id));
-    // Nuevo: cambia el mensaje según si hubo reembolso:
-    if (resp?.refunded) {
-      toast.success('Reserva eliminada y reembolso solicitado. 💸');
-    } else {
-      toast.success('Reserva eliminada correctamente.');
+    if (!window.confirm('¿Eliminar reserva?')) return;
+    try {
+      const resp = await deleteReservation(id);
+      setReservas(rs => rs.filter(r => r.id !== id));
+      if (resp?.refunded) {
+        toast.success('Reserva eliminada y reembolso solicitado. 💸');
+      } else {
+        toast.success('Reserva eliminada correctamente.');
+      }
+    } catch (err) {
+      const msg = err.response?.data?.message || err.message;
+      toast.error('Error: ' + msg);
     }
-  } catch (err) {
-    const msg = err.response?.data?.message || err.message;
-    toast.error('Error: ' + msg);
-  }
-};
-
+  };
 
   if (mode) {
     const reservation = reservas.find(r => r.id === mode.id);
     return (
-      // Cuando cierras el modo edición tras guardar cambios
-<EditReservation
-  reservation={reservation}
-  onDone={updated => {
-    setReservas(rs => rs.map(r => r.id === updated.id ? updated : r));
-    toast.success(`Tu próxima reserva ha sido editada con éxito.`);
-    setMode(null);
-  }}
-  onCancel={() => setMode(null)}
-/>
-
+      <EditReservation
+        reservation={reservation}
+        onDone={updated => {
+          setReservas(rs => rs.map(r => r.id === updated.id ? updated : r));
+          toast.success(`Tu próxima reserva ha sido editada con éxito.`);
+          setMode(null);
+        }}
+        onCancel={() => setMode(null)}
+      />
     );
   }
 
   const delAllPast = async () => {
     if (!window.confirm('¿Eliminar todas las reservas ya jugadas?')) return;
     try {
-      const { deletedCount } = await deletePastReservations();
+      const deletedCount = await deletePastReservations();
       toast.success(`Se han eliminado ${deletedCount} reservas pasadas.`);
       setReservas(rs => rs.filter(r => new Date(r.endTime).getTime() > Date.now()));
     } catch (err) {
@@ -106,19 +113,16 @@ const [, setLoading] = useState(false);
       }
 
       <h2>Reservas Jugadas</h2>
-      {pasadas.length
-        ? (
-          <>
-            <button className="btn-clear-all" onClick={delAllPast}>
-              Eliminar todas
-            </button>
-            {pasadas.map(r => (
-              <ReservationCard key={r.id} reservation={r} readOnly registered={!!r.result} />
-            ))}
-          </>
-        )
-        : <p>No tienes reservas pasadas.</p>
-      }
+      {pasadas.length ? (
+        <>
+          <button className="btn-clear-all" onClick={delAllPast}>
+            Eliminar todas
+          </button>
+          {pasadas.map(r => (
+            <ReservationCard key={r.id} reservation={r} readOnly registered={!!r.result} />
+          ))}
+        </>
+      ) : <p>No tienes reservas pasadas.</p>}
     </div>
   );
 }

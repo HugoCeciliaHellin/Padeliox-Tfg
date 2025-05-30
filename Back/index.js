@@ -30,7 +30,7 @@ const paymentRoutes = require('./routes/paymentRoutes');
 const globalReservationRoutes = require('./routes/globalReservationRoutes');
 
 const app = express();
-const PORT = +process.env.PORT;
+const PORT = parseInt(process.env.PORT, 10) || 3000;
 const CORS_ORIGIN = process.env.CORS_ORIGIN;
 const rateLimit = require('./middlewares/rateLimit');
 app.use(rateLimit);
@@ -78,4 +78,8 @@ app.use((err, req, res, next) => {
 // Arranque
 sequelize.sync()
 .then(() => app.listen(PORT, () => console.log(`Servidor en http://localhost:${PORT}`)))
-.catch(console.error);
+.catch(err => {
+  console.error('❌ Error al conectar con la base de datos:', err);
+  process.exit(1);
+});
+

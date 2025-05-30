@@ -15,6 +15,13 @@ export default function Login() {
   const handleSubmit = async e => {
     e.preventDefault();
     setErrors({});
+
+    if (!formData.email || !formData.password) {
+      setErrors({ general: 'Email y contraseña son obligatorios' });
+      toast.error('Email y contraseña son obligatorios');
+      return;
+    }
+
     try {
       const { accessToken, user } = await apiClient.post('/auth/login', formData);
       login({
@@ -26,16 +33,23 @@ export default function Login() {
       });
       navigate('/app');
     } catch (err) {
-      if (err.response?.data?.errors) {
-        const fieldErrors = {};
-        err.response.data.errors.forEach(e => fieldErrors[e.param] = e.msg);
-        setErrors(fieldErrors);
-      } else {
-        const msg = err.response?.data?.message || 'Credenciales inválidas';
-        setErrors({ general: msg });
-        toast.error(msg);
-      }
-    }
+  if (err.response?.data?.errors) {
+    const fieldErrors = {};
+    err.response.data.errors.forEach(e => {
+      fieldErrors[e.param] = e.msg;
+      toast.error(`${e.param}: ${e.msg}`);
+    });
+    setErrors(fieldErrors);
+  } else if (err.response?.data?.message) {
+    setErrors({ general: err.response.data.message });
+    toast.error(err.response.data.message);
+  } else {
+    const fallback = 'Credenciales inválidas';
+    setErrors({ general: fallback });
+    toast.error(fallback);
+  }
+}
+
   };
 
   const handleChange = e => {
