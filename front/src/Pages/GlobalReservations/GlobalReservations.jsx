@@ -68,7 +68,6 @@ export default function GlobalReservations() {
                 </td>
                 <td>
                   <div className="user-info">
-                    <span className="user-name">{r.User?.username}</span>
                     <span className="user-email muted">{r.User?.email}</span>
                   </div>
                 </td>

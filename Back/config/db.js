@@ -16,6 +16,7 @@ const sequelize = new Sequelize(
     logging: false,            // desactiva logs SQL en producción
     timezone: '+02:00',           // <<< <- almacena/lee en UTC+2
     dialectOptions: {
+      charset: 'utf8mb4',
       dateStrings: true,          // recibe DATETIME como strings
       typeCast: true
     }  

@@ -33,6 +33,7 @@ const app = express();
 const PORT = parseInt(process.env.PORT, 10) || 3000;
 const CORS_ORIGIN = process.env.CORS_ORIGIN;
 const rateLimit = require('./middlewares/rateLimit');
+
 app.use(rateLimit);
 
 
@@ -75,11 +76,13 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: 'Error inesperado en el servidor.' });
 });
 
-// Arranque
-sequelize.sync()
-.then(() => app.listen(PORT, () => console.log(`Servidor en http://localhost:${PORT}`)))
-.catch(err => {
-  console.error('❌ Error al conectar con la base de datos:', err);
-  process.exit(1);
-});
+
+  sequelize.sync()
+    .then(() => app.listen(PORT, () => console.log(`Servidor en http://localhost:${PORT}`)))
+    .catch(err => {
+      console.error('❌ Error al conectar con la base de datos:', err);
+      process.exit(1);
+    });
+
+module.exports = app;
 
