@@ -1,4 +1,3 @@
-// src/components/Footer/Footer.jsx
 import { Link } from 'react-router-dom';
 import './Footer.css';
 

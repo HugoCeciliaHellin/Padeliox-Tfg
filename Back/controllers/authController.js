@@ -1,9 +1,7 @@
-// controllers/authController.js
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
-// Registro de usuario
 const register = async (req, res, next) => {
   try {
     const { username, email, password, role } = req.body;
@@ -107,7 +105,6 @@ const refreshAccessToken = async (req, res, next) => {
   res.json({ accessToken: newAccessToken });
 };
 
-// Logout
 const logout = async (req, res, next) => {
   const { refreshToken } = req.body;
   if (!refreshToken) return res.status(400).json({ message: 'No token provided' });

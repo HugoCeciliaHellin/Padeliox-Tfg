@@ -1,4 +1,3 @@
-// src/utils/date.js
 export function toLocalISO(d) {
   const YYYY = d.getFullYear();
   const MM   = String(d.getMonth()+1).padStart(2,'0');

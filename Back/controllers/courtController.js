@@ -1,4 +1,3 @@
-// controllers/courtController.js
 const { Op } = require('sequelize');
 const { toLocalISO } = require('../utils/date');
 const reservationService = require('../services/reservationService');
@@ -8,7 +7,7 @@ const { Court } = require('../models');
 
 exports.listCourts = async (req, res) => {
   const {
-    search,        // texto libre (clubName o city)
+    search,        
     maxPrice,
     surface,
     hasLights,

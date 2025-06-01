@@ -1,4 +1,3 @@
-// src/Pages/ReserveCourt/ReserveCourt.jsx
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import SlotGrid from '../../components/SlotGrid/SlotGrid';

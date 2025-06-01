@@ -1,4 +1,3 @@
-// models/User.js
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/db');
 
@@ -50,11 +49,11 @@ const User = sequelize.define('User', {
   refreshToken: {
     type: DataTypes.STRING,
     allowNull: true,
-    field: 'refresh_token' // aseguramos que en BD se llame así si quieres snake_case
+    field: 'refresh_token' 
   }
 }, {
   timestamps: true,
-  underscored: true,    // created_at, updated_at en DB (snake_case)
+  underscored: true,    
   tableName: 'users',
   defaultScope: {
     attributes: { exclude: ['password', 'refreshToken'] }

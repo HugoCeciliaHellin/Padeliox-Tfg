@@ -1,4 +1,3 @@
-// controllers/paymentController.js
 const paymentService = require('../services/paymentService');
 const reservationService = require('../services/reservationService');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY.trim());
@@ -37,7 +36,7 @@ exports.completeSession = async (req, res, next) => {
   try {
     const { sessionId } = req.body;
     const session = await stripe.checkout.sessions.retrieve(sessionId);
-    console.log('Metadata recibida:', session.metadata); // 👈 Aquí está bien
+    console.log('Metadata recibida:', session.metadata); 
 
     if (session.payment_status !== 'paid') {
       return res.status(402).json({ message: 'El pago no está completado. Estado: ' + session.payment_status });

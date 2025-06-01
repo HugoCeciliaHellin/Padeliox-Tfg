@@ -1,4 +1,3 @@
-//controllers/reservationController.js
 const reservationService = require('../services/reservationService');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const { toLocalISO } = require('../utils/date');
@@ -70,7 +69,6 @@ exports.deleteReservation = async (req, res, next) => {
       reembolsado = true;
     }
     await reservationService.deleteReservation(req.params.id, req.user.userId);
-    // Ahora devuelve JSON indicando si hubo reembolso:
     res.json({ deleted: true, refunded: reembolsado });
   } catch (err) {
     next(err);

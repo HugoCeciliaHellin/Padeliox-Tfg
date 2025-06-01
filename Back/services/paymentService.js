@@ -1,4 +1,3 @@
-// services/paymentService.js
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY.trim());
 
 async function createCheckoutSession({

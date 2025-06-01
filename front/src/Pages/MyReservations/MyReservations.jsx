@@ -1,4 +1,3 @@
-// src/Pages/MyReservations/MyReservations.jsx
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ReservationCard from '../../components/ReservationCard/ReservationCard';
@@ -11,8 +10,7 @@ import {
 import apiClient from '../../api/client';
 import { toast } from 'react-toastify';
 
-let inFlight = false; // 🛡️ Protección de múltiples llamadas
-
+let inFlight = false; 
 export default function MyReservations() {
   const [reservas, setReservas] = useState([]);
   const [mode, setMode] = useState(null);

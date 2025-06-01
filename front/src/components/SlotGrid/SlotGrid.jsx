@@ -1,5 +1,4 @@
 
-// src/components/SlotGrid/SlotGrid.jsx
 import React from 'react';
 import './SlotGrid.css';
 

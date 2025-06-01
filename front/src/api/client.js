@@ -1,4 +1,3 @@
-// src/api/client.js
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
@@ -16,8 +15,7 @@ axiosInstance.interceptors.request.use(cfg => {
 axiosInstance.interceptors.response.use(
   res => res,
   err => {
-    if (err.response) return Promise.reject(err); // El frontend se encarga del toast
-    // Network error, servidor caído, etc.
+    if (err.response) return Promise.reject(err); 
     let msg = '';
     if (err.message === 'Network Error') {
       msg = 'No se puede conectar con el servidor. ¿El backend está encendido y accesible?';

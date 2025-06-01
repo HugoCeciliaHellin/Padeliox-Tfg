@@ -40,7 +40,6 @@
   transform: translateY(-2px);
 }
 
-/* TABLET ≤ 900px */
 @media (max-width: 900px) {
   .edit-reservation {
     padding: 1.2rem;
@@ -58,7 +57,6 @@
   }
 }
 
-/* MÓVILES ≤ 600px */
 @media (max-width: 600px) {
   .edit-reservation {
     padding: 1rem;
@@ -76,7 +74,6 @@
   }
 }
 
-/* MÓVILES PEQUEÑOS ≤ 480px */
 @media (max-width: 480px) {
   .edit-reservation {
     padding: 0.8rem;

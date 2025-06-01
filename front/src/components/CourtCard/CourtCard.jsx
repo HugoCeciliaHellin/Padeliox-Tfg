@@ -1,4 +1,3 @@
-// src/components/CourtCard/CourtCard.jsx
 import { useNavigate } from 'react-router-dom';
 import './CourtCard.css';
 

@@ -1,4 +1,3 @@
-// index.js 
 require('dotenv').config();
 
 const requiredEnvs = [
@@ -45,34 +44,28 @@ app.use('/api/courts', courtRoutes);
 app.use('/api/reservations', reservationRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/global-reservations', globalReservationRoutes);
-app.set('trust proxy', 1); // Para entorno local con proxies/reverse proxies y rate-limit
+app.set('trust proxy', 1); 
 
 
 
-// Error handler universal y friendly
 app.use((err, req, res, next) => {
-  // 1. Express-validator: convierte errors array a mensaje
   if (err.errors && Array.isArray(err.errors)) {
     return res.status(err.status || 400).json({
       message: err.errors.map(e => e.msg).join(' | '),
       errors: err.errors
     });
   }
-  // 2. Sequelize errores de unicidad
   if (err.name === 'SequelizeUniqueConstraintError') {
     return res.status(400).json({
       message: err.errors?.[0]?.message || 'Ya existe un registro con ese valor único.'
     });
   }
-  // 3. Otros errores de Sequelize
   if (err.name && err.name.startsWith('Sequelize')) {
     return res.status(400).json({ message: err.message });
   }
-  // 4. Errores de validación manual (throw new Error('msg'))
   if (err.message) {
     return res.status(err.status || 400).json({ message: err.message });
   }
-  // 5. Fallback por si acaso
   res.status(500).json({ message: 'Error inesperado en el servidor.' });
 });
 

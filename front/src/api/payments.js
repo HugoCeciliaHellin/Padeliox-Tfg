@@ -1,7 +1,5 @@
-// src/api/payments.js
 import { apiClient } from './client';
 
-// Crea sesión Stripe y devuelve el id
 export function createCheckoutSession(courtId, startTime, endTime) {
   return apiClient
     .post('/payments/create-session', { courtId, startTime, endTime })

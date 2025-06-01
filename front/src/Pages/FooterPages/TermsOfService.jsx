@@ -1,4 +1,3 @@
-// Pages/TermsOfService/TermsOfService.jsx
 import './TermsOfService.css';
 
 const TermsOfService = () => (

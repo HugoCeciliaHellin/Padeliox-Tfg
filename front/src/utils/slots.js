@@ -1,9 +1,6 @@
-// src/utils/slots.js
 import { toLocalISO } from './date';
 
 /**
- * Genera un array de timestamps ISO-local (sin “Z”) espaciados cada intervalMs
- * desde openTime hasta closeTime dentro de la fecha dada.
  * @param {string} date      "YYYY-MM-DD"
  * @param {string} openTime  "HH:mm"
  * @param {string} closeTime "HH:mm"
@@ -20,7 +17,6 @@ export function generateSlots({ date, openTime, closeTime, intervalMs }) {
 
   while (cur < end) {
     const d = new Date(cur);
-    // toLocalISO quita la Z y paddea todo
     slots.push(toLocalISO(d));
     cur += intervalMs;
   }

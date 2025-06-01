@@ -9,7 +9,6 @@
   transition: box-shadow 0.2s;
 }
 
-/* Tablets */
 @media (max-width: 900px) {
   .main-app-content {
     max-width: 96vw;
@@ -18,14 +17,13 @@
   }
 }
 
-/* Móviles estándar */
 @media (max-width: 600px) {
   .main-app-content {
     border-radius: 0;
     margin: 0;
-    padding: 0.6rem;
+    padding: 0.8rem;
     box-shadow: none;
-    min-height: 80vh;
+    min-height: 70vh;
   }
 
   h2, h3 {
@@ -33,10 +31,9 @@
   }
 }
 
-/* Móviles pequeños */
 @media (max-width: 480px) {
   .main-app-content {
-    padding: 0.5rem;
+    padding: 0.6rem;
   }
 
   h2, h3 {
@@ -44,7 +41,6 @@
   }
 }
 
-/* Botones */
 button, .btn-save, .btn-cancel, .btn-action {
   font-size: 1rem;
   padding: 0.7rem 1.3rem;
@@ -55,6 +51,7 @@ button, .btn-save, .btn-cancel, .btn-action {
   transition: background 0.2s ease;
   margin: 0.3rem 0.15rem;
   cursor: pointer;
+  width: auto;
 }
 
 button:disabled {
@@ -63,7 +60,6 @@ button:disabled {
   cursor: not-allowed;
 }
 
-/* Inputs y selects */
 input, select, textarea {
   font-size: 1em;
   padding: 0.45em 0.6em;
@@ -74,36 +70,40 @@ input, select, textarea {
   box-sizing: border-box;
 }
 
-/* Tablas base */
 table {
   width: 100%;
   border-collapse: collapse;
 }
+
 th, td {
   padding: 0.5rem 0.25rem;
   text-align: left;
   border-bottom: 1px solid #eee;
 }
 
-/* Tablas responsive (≤600px) */
 @media (max-width: 600px) {
   table, thead, tbody, th, td, tr {
     display: block;
   }
 
-  th {
-    position: absolute;
-    left: -9999px;
+  thead {
+    display: none;
+  }
+
+  tr {
+    margin-bottom: 1rem;
   }
 
   td {
-    border: none;
     position: relative;
-    padding-left: 40%;
-    min-height: 2.2em;
+    padding-left: 50%;
+    text-align: left;
+    border: none;
+    border-bottom: 1px solid #ddd;
   }
 
   td:before {
+    content: attr(data-label); 
     position: absolute;
     left: 0.5em;
     top: 0.8em;

@@ -58,19 +58,15 @@ function App() {
           }
         />
 
-        {/* Ruta EXPÍCITA para Stripe (clave del fix) */}
         <Route path="/app/reservas" element={<MyReservations />} />
 
-        {/* Público Footer */}
         <Route path="/politica-privacidad" element={<PrivacyPolicy />} />
         <Route path="/terminos-servicio" element={<TermsOfService />} />
 
-        {/* Todo /app normal */}
         <Route path="/app" element={<PrivateRoute />}>
           <Route index element={<MainApp />} />
           <Route path="reservar" element={<Courts />} />
           <Route path="reservar/:id" element={<ReserveCourt />} />
-          {/* Ya NO pongas <Route path="reservas" ...> aquí, la tienes arriba */}
           <Route path="perfil" element={<Profile />} />
           <Route path="registro" element={<RegisterMatch />} />
           <Route path="estadisticas" element={<Statistics />} />

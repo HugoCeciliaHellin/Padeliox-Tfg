@@ -22,7 +22,6 @@
   color: var(--primary-color);
 }
 
-/* TABLET ≤ 900px */
 @media (max-width: 900px) {
   .page {
     padding: 0 0.8rem;
@@ -37,7 +36,6 @@
   }
 }
 
-/* MÓVILES ≤ 600px */
 @media (max-width: 600px) {
   .page {
     padding: 0 0.5rem;
@@ -54,7 +52,6 @@
   }
 }
 
-/* MÓVILES PEQUEÑOS ≤ 480px */
 @media (max-width: 480px) {
   .privacy-policy h1 {
     font-size: 1.5rem;

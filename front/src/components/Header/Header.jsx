@@ -12,7 +12,6 @@ const Header = () => {
     navigate('/login');
   };
 
-  // --- Header para ORGANIZER ---
   if (user?.role === 'organizer') {
     return (
       <header className="header">
@@ -37,7 +36,6 @@ const Header = () => {
     );
   }
 
-  // --- Header para USERS normales ---
   return (
     <header className="header">
       <div className="container">

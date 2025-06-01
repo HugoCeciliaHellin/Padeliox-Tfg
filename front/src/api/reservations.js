@@ -1,4 +1,3 @@
-// src/api/reservations.js
 import { apiClient } from './client';
 import { toLocalISO } from '../utils/date';
 

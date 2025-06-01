@@ -1,12 +1,4 @@
-:root {
-  --primary-color: #002147;
-  --bg-color: #ffffff;
-  --accent-color: #ffc107;
-  --hover-color: #e0a800;
-  --button-color: #17a2b8;
-  --button-hover-color: #138496;
-}
-
+/* --- BASE --- */
 .header {
   background-color: var(--primary-color);
   color: var(--bg-color);
@@ -26,6 +18,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .logo-container {
@@ -49,6 +42,7 @@ nav ul {
   padding: 0;
   margin: 0;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 nav li {
@@ -120,16 +114,42 @@ nav a:hover {
   transform: translateY(-2px);
 }
 
-/* Tablets */
+/* --- TABLETS (≤900px) --- */
 @media (max-width: 900px) {
   .header .container {
     flex-direction: column;
+    align-items: center;
     gap: 0.75rem;
+  }
+
+  nav {
+    width: 100%;
+    background-color: var(--primary-color);
   }
 
   nav ul {
     flex-direction: column;
-    gap: 0.6rem;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 1rem 0;
+  }
+
+  nav li {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  nav a,
+  .user-info,
+  .role-info,
+  .btn-logout,
+  .btn-login,
+  .btn-register {
+    width: 90%;
+    text-align: center;
+    padding: 0.6rem;
+    font-size: 1rem;
   }
 
   .logo {
@@ -137,7 +157,7 @@ nav a:hover {
   }
 }
 
-/* Móviles estándar */
+/* --- MÓVILES ESTÁNDAR (≤600px) --- */
 @media (max-width: 600px) {
   .header {
     padding: 0.7rem 0.6rem;
@@ -153,7 +173,7 @@ nav a:hover {
   }
 }
 
-/* Móviles pequeños */
+/* --- MÓVILES PEQUEÑOS (≤480px) --- */
 @media (max-width: 480px) {
   nav a {
     font-size: 0.94rem;

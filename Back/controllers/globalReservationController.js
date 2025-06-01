@@ -1,4 +1,3 @@
-// controllers/globalReservationController.js
 const { Reservation, User, Court } = require('../models');
 const { Op } = require('sequelize');
 const { Parser } = require('json2csv');
@@ -52,7 +51,6 @@ exports.exportCSV = async (req, res, next) => {
       PaymentId:  r.paymentIntentId || ''
     }));
 
-    // ⚠️ CSV vacío con cabecera si no hay reservas
     if (!rows.length) {
       const parser = new Parser();
       const csvEmpty = parser.parse([]);

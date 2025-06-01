@@ -1,4 +1,3 @@
-// src/api/courts.js
 import { apiClient } from './client';
 
 export function getCourts(filters) {
