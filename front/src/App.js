@@ -26,7 +26,7 @@ function App() {
   return (
     <Router>
       <Header />
-
+      <div className="layout-wrapper">
       <Routes>
         {/* Si organizer va directo a global-reservations, sino flujo normal */}
         <Route
@@ -84,6 +84,7 @@ function App() {
           }
         />
       </Routes>
+      </div>
 
       <Footer />
     </Router>

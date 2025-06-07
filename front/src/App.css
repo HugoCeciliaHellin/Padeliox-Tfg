@@ -9,6 +9,25 @@
   transition: box-shadow 0.2s;
 }
 
+.layout-wrapper {
+  padding-top: 80px; 
+}
+@media (max-width: 600px) {
+  .layout-wrapper {
+    padding-top: 300px; 
+  }
+}
+@media (max-width: 900px) {
+  .layout-wrapper {
+    padding-top: 300px; 
+  }
+}
+@media (max-width: 480px) {
+  .layout-wrapper {
+    padding-top: 300px; 
+  }
+}
+
 @media (max-width: 900px) {
   .main-app-content {
     max-width: 96vw;
@@ -21,9 +40,9 @@
   .main-app-content {
     border-radius: 0;
     margin: 0;
-    padding: 0.8rem;
+    padding: 0.9rem;
     box-shadow: none;
-    min-height: 70vh;
+    min-height: 72vh;
   }
 
   h2, h3 {
@@ -33,7 +52,7 @@
 
 @media (max-width: 480px) {
   .main-app-content {
-    padding: 0.6rem;
+    padding: 0.7rem;
   }
 
   h2, h3 {

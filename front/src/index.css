@@ -5,6 +5,9 @@
   --hover-color: #ffdb4d;
   --error-color: #d32f2f;
   --success-color: #388e3c;
+  --button-color: #17a2b8; 
+  --button-hover-color: #138496;
+
 }
 
 * {
@@ -51,14 +54,14 @@ button:hover {
 
 @media (max-width: 480px) {
   body {
-    font-size: 1rem;
-    padding: 0 0.5rem;
+    font-size: 0.98rem; /* un pelín más reducido */
+    padding: 0 0.4rem;
   }
 
   button {
     width: 100%;
-    font-size: 1rem;
-    padding: 0.8rem;
+    font-size: 0.95rem;
+    padding: 0.75rem;
   }
 
   .main-app,
@@ -66,10 +69,10 @@ button:hover {
   .login-form {
     width: 100%;
     max-width: 100%;
-    padding: 0.75rem;
-    margin: 0 auto;
-  }
+    padding: 0.7rem;
+    margin: 0 auto;  }
 }
+
 
 @media (max-width: 600px) {
   .main-app,

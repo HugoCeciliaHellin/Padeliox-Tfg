@@ -8,7 +8,7 @@ const Homepage = () => (
       <h1>¡Bienvenido a <span>PADELIIOX</span>!</h1>
       <p>
         Gestiona, participa y disfruta del pádel de manera rápida y sencilla. 
-        La plataforma ideal para organizar torneos y reservas con comodidad y seguridad.
+        La plataforma ideal para reservar con comodidad y seguridad.
       </p>
     </div>
   </section>
